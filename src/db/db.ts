@@ -1,6 +1,11 @@
-import {blogsViewType, DB_Type} from "./Types";
+import {DB_Type} from "./Types";
 
 export const db:DB_Type = {
-    existingBlogs : [],
+    existingBlogs : [{
+        "id": "string",
+        "name": "string",
+        "description": "string",
+        "websiteUrl": "string"
+    }],
     existingPosts : []
 }
