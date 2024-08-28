@@ -19,7 +19,7 @@ postsRouter.get("/", (req: Request, res: Response) => {
         .json(db.existingPosts)
 })
 
-postsRouter.post("/", authorizationCheck,...inputPostsValidation(), inputErrorCheckValidator,inputPostController)
+postsRouter.post("/", authorizationCheck,inputPostsValidation(), inputErrorCheckValidator,inputPostController)
 postsRouter.get("/:id", findPostById)
-postsRouter.put("/:id", authorizationCheck, ...inputPostsValidation(), inputErrorCheckValidator,updatePostByID)
+postsRouter.put("/:id", authorizationCheck, inputPostsValidation(), inputErrorCheckValidator,updatePostByID)
 postsRouter.delete("/:id",authorizationCheck,deletePostById)
