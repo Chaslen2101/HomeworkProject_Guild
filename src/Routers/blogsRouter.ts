@@ -20,7 +20,7 @@ blogRouter.get('/', (req: Request, res: Response) => {
         .json(db.existingBlogs)
 })
 
-blogRouter.post("/", authorizationCheck, inputBlogsValidation, inputErrorCheckValidator,createBlogController)
+blogRouter.post("/", authorizationCheck, ...inputBlogsValidation(), inputErrorCheckValidator,createBlogController)
 blogRouter.get("/:id",findBlogByIdController)
-blogRouter.put("/:id", authorizationCheck,inputBlogsValidation, inputErrorCheckValidator, updateBlogById)
+blogRouter.put("/:id", authorizationCheck,...inputBlogsValidation(), inputErrorCheckValidator, updateBlogById)
 blogRouter.delete("/:id",authorizationCheck,deleteBlogByID)
