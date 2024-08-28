@@ -28,6 +28,10 @@ export const posts = {
             neededPost.shortDescription = inputData.shortDescription
             neededPost.content = inputData.content
             neededPost.blogId = inputData.blogId
+    },
+
+    delete(indexOfPost: number) {
+        db.existingPosts.splice(indexOfPost, 1)
     }
 
 }

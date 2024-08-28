@@ -2,6 +2,7 @@ import {posts} from "./posts_repository";
 import {postsViewType} from "../../db/Types";
 import {Request, Response} from "express";
 import {httpStatuses} from "../../settings";
+import {db} from "../../db/db";
 
 export const inputPostController = (req: Request, res: Response) => {
     const newPost:postsViewType = posts.create(req.body)
@@ -41,6 +42,8 @@ export const updatePostByID = (req: Request, res: Response) => {
 export const deletePostById = (req: Request, res: Response) => {
     const neededPost = posts.find(req.params.id)
     if (neededPost) {
+        const indexOfPost = db.existingPosts.indexOf(neededPost)
+        posts.delete(indexOfPost)
         res
             .status(httpStatuses.NO_CONTENT_204)
             .json({})
