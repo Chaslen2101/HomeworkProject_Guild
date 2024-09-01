@@ -1,14 +1,15 @@
 import {Router} from "express"
-import {db} from "../db/db";
 import {Request, Response} from "express";
 import {httpStatuses} from "../settings";
+import {blogCollection,postCollection} from "../db/MongoDB";
 
 export const deleteAllRouter = Router({})
 
-deleteAllRouter.delete("/",(req: Request, res: Response) => {
-    db.existingBlogs = []
+deleteAllRouter.delete("/",async (req: Request, res: Response) => {
+    await blogCollection.drop()
+    await postCollection.drop()
     res
         .status(httpStatuses.NO_CONTENT_204)
-        .send()
+        .json({})
 
 })

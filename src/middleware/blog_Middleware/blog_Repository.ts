@@ -1,24 +1,38 @@
 import {blogsInputType, blogsViewType} from "../../db/Types";
-import {db} from "../../db/db";
+import {blogCollection, db} from "../../db/MongoDB";
 
 
 export const blog = {
-    create(newBlog: blogsInputType) {
+    async create(newBlog: blogsInputType) {
         const createdBlog: blogsViewType = {
             id: new Date().toISOString() + Math.random(),
             name: newBlog.name,
             description: newBlog.description,
-            websiteUrl: newBlog.websiteUrl
+            websiteUrl: newBlog.websiteUrl,
+            createdAt: new Date().toISOString(),
+            isMembership: false
         }
-        db.existingBlogs.push(createdBlog)
-        return createdBlog
+        await blogCollection.insertOne(createdBlog)
+        return true
     },
 
-    find(id: string) {
-        return db.existingBlogs.find((blog: blogsViewType) => blog.id === id)
+    async findByID(id: string) {
+        return await blogCollection.findOne({id: id})
     },
 
-    delete(index: number) {
-        db.existingBlogs.splice(index,1)
+    async findByName(name: string) {
+        return await blogCollection.findOne({name: name})
+    },
+
+    async delete(id: string) {
+        await blogCollection.deleteOne({id: id})
+    },
+
+    async update(id: string, newInfo: blogsInputType) {
+        await blogCollection.updateOne({id: id}, {$set: {
+                name: newInfo.name,
+                description: newInfo.description,
+                websiteUrl: newInfo.websiteUrl
+            }})
     }
 }

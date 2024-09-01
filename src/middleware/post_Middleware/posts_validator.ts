@@ -1,5 +1,6 @@
 import {body} from "express-validator";
 import {blog} from "../blog_Middleware/blog_Repository";
+import {blogCollection} from "../../db/MongoDB";
 
 export const inputPostsValidation = () => {
     return [
@@ -14,8 +15,8 @@ export const inputPostsValidation = () => {
             .isLength({min:1,max: 1000}).withMessage("content should be from 1 to 1000 symbols"),
         body("blogId").trim().exists().withMessage("blogId is required")
             .isString().withMessage("blogId should be string")
-            .custom(inputBlogId => {
-                const neededBlog = blog.find(inputBlogId)
+            .custom(async inputBlogId => {
+                const neededBlog = await blog.findByID(inputBlogId)
                 if (neededBlog) {
                     return true
                 }

@@ -17,5 +17,9 @@ export const httpStatuses = {
     UNAUTHORIZED_401: 401,
     NOT_FOUND_404: 404
 }
-
+export const mongoSettings = {
+    dbName : "guild-dev",
+    blogCollectionName : "blogs",
+    postCollectionName : "posts"
+}
 export const ADMIN_AUTH = "admin:qwerty"

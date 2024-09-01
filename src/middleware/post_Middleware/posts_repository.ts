@@ -1,37 +1,39 @@
 import {postsInputType, postsViewType} from "../../db/Types";
-import {db} from "../../db/db";
-import {blog} from "../blog_Middleware/blog_Repository";
+import {blogCollection, postCollection} from "../../db/MongoDB";
 
 export const posts = {
 
-    find(id: string) {
-        return db.existingPosts.find(posts => posts.id === id)
+    async find(id: string) {
+        return await postCollection.findOne({id: id})
     },
 
-    create(inputData: postsInputType) {
-        const neededBlogName = blog.find(inputData.blogId)!
-        const newPost = {
-            id: new Date().toISOString() + Math.random(),
-            title: inputData.title,
-            shortDescription: inputData.shortDescription,
-            content: inputData.content,
-            blogId: inputData.blogId,
-            blogName: neededBlogName.name
-        }
-
-        db.existingPosts.push(newPost)
-        return newPost
+    async create(inputData: postsInputType) {
+        const neededBlog = await blogCollection.findOne({id: inputData.blogId})
+        if (neededBlog) {
+            const newPost:postsViewType = {
+                id: new Date().toISOString() + Math.random(),
+                title: inputData.title,
+                shortDescription: inputData.shortDescription,
+                content: inputData.content,
+                blogId: inputData.blogId,
+                blogName: neededBlog.name,
+                createdAt: new Date().toISOString()
+            }
+            await postCollection.insertOne(newPost)
+            return newPost.id
+        }else {return undefined}
     },
 
-    update(inputData: postsInputType, id: string, neededPost: postsViewType) {
-            neededPost.title = inputData.title
-            neededPost.shortDescription = inputData.shortDescription
-            neededPost.content = inputData.content
-            neededPost.blogId = inputData.blogId
+    async update(id: string, newInfo: postsInputType) {
+        await postCollection.updateOne({id: id},{$set:{
+                title: newInfo.title,
+                shortDescription: newInfo.shortDescription,
+                content: newInfo.content,
+                blogId: newInfo.blogId
+            }})
     },
 
-    delete(indexOfPost: number) {
-        db.existingPosts.splice(indexOfPost, 1)
+    async delete(id: string) {
+        await postCollection.deleteOne({id: id})
     }
-
 }

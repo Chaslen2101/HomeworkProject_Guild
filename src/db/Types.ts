@@ -3,6 +3,8 @@ export type blogsViewType = {
     name: string
     description: string
     websiteUrl: string
+    createdAt: string
+    isMembership: boolean
 }
 
 export type blogsInputType = {
@@ -18,6 +20,7 @@ export type postsViewType = {
     content: string
     blogId: string
     blogName: string
+    createdAt: string
 }
 
 export type postsInputType = {

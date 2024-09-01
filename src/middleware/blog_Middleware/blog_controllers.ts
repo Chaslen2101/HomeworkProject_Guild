@@ -1,17 +1,28 @@
 import {Request, Response} from "express";
 import {blog} from "./blog_Repository";
 import {httpStatuses} from "../../settings";
-import {db} from "../../db/db";
+import {blogCollection} from "../../db/MongoDB";
+// import {db} from "../../db/db";
 
-export const createBlogController = (req: Request, res: Response) => {
-    const newVideo = blog.create(req.body)
+export const returnAllBlogs = async (req: Request, res: Response) => {
+    const allBlogs = await blogCollection.find().toArray()
     res
-        .status(httpStatuses.CREATED_201)
-        .json(newVideo)
+        .status(httpStatuses.OK_200)
+        .json(allBlogs)
 }
 
-export const findBlogByIdController = (req: Request, res: Response) => {
-    const neededBlog = blog.find(req.params.id)
+export const createBlogController = async (req: Request, res: Response) => {
+    const isVideoCreated = await blog.create(req.body)
+    if (isVideoCreated) {
+        const newVideo = await blog.findByName(req.body.name)
+        res
+            .status(httpStatuses.CREATED_201)
+            .json(newVideo)
+    }
+}
+
+export const findBlogByIdController = async (req: Request, res: Response) => {
+    const neededBlog = await blog.findByID(req.params.id)
     if (neededBlog) {
         res
             .status(httpStatuses.OK_200)
@@ -23,12 +34,10 @@ export const findBlogByIdController = (req: Request, res: Response) => {
     }
 }
 
-export const updateBlogById = (req: Request, res: Response) => {
-    const neededBlog = blog.find(req.params.id)
+export const updateBlogById = async (req: Request, res: Response) => {
+    const neededBlog = await blog.findByID(req.params.id)
     if (neededBlog) {
-        neededBlog.name = req.body.name
-        neededBlog.description = req.body.description
-        neededBlog.websiteUrl = req.body.websiteUrl
+        await blog.update(req.params.id,req.body)
         res
             .status(httpStatuses.NO_CONTENT_204)
             .json({})
@@ -39,11 +48,10 @@ export const updateBlogById = (req: Request, res: Response) => {
     }
 }
 
-export const deleteBlogByID = (req: Request, res: Response) => {
-    const neededBlog = blog.find(req.params.id)
+export const deleteBlogByID = async (req: Request, res: Response) => {
+    const neededBlog = await blog.findByID(req.params.id)
     if (neededBlog) {
-        const indexOfNeededBlog = db.existingBlogs.indexOf(neededBlog)
-        blog.delete(indexOfNeededBlog)
+        await blog.delete(req.params.id)
         res
             .status(httpStatuses.NO_CONTENT_204)
             .json({})
