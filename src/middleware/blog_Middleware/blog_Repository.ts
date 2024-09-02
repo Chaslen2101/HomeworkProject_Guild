@@ -35,4 +35,4 @@ export const blog = {
                 websiteUrl: newInfo.websiteUrl
             }})
     }
-}
+};
