@@ -4,7 +4,7 @@ import {blogCollection, postCollection} from "../../db/MongoDB";
 export const posts = {
 
     async find(id: string) {
-        return await postCollection.findOne({id: id})
+        return await postCollection.findOne({id: id},{projection: {_id: 0}})
     },
 
     async create(inputData: postsInputType) {

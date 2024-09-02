@@ -4,7 +4,7 @@ import {httpStatuses} from "../../settings";
 import {postCollection} from "../../db/MongoDB";
 
 export const returnAllPosts = async (req: Request, res: Response) => {
-    const allPosts = await postCollection.find().toArray()
+    const allPosts = await postCollection.find({},{projection:{_id: 0}}).toArray()
     res
         .status(httpStatuses.OK_200)
         .json(allPosts)

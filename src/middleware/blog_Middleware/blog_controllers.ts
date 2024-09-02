@@ -5,7 +5,7 @@ import {blogCollection} from "../../db/MongoDB";
 // import {db} from "../../db/db";
 
 export const returnAllBlogs = async (req: Request, res: Response) => {
-    const allBlogs = await blogCollection.find().toArray()
+    const allBlogs = await blogCollection.find({},{projection:{_id: 0}}).toArray()
     res
         .status(httpStatuses.OK_200)
         .json(allBlogs)

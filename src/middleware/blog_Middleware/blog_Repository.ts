@@ -1,5 +1,5 @@
 import {blogsInputType, blogsViewType} from "../../db/Types";
-import {blogCollection, db} from "../../db/MongoDB";
+import {blogCollection} from "../../db/MongoDB";
 
 
 export const blog = {
@@ -17,11 +17,11 @@ export const blog = {
     },
 
     async findByID(id: string) {
-        return await blogCollection.findOne({id: id})
+        return await blogCollection.findOne({id: id}, {projection: {_id: 0}})
     },
 
     async findByName(name: string) {
-        return await blogCollection.findOne({name: name})
+        return await blogCollection.findOne({name: name},{projection: {_id: 0}})
     },
 
     async delete(id: string) {
