@@ -22,6 +22,7 @@ export const inputErrorCheckValidator = (req: Request, res: Response, next: Next
             .json({
                 errorsMessages: filteredArray.map(x => ({message: x.msg, field: x.path}))
             })
+        return
     }
     next()
 }
