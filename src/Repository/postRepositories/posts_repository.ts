@@ -41,14 +41,14 @@ export const posts = {
 
     async findAllPostsByBlogId(id:string, query: inputQueryType) {
         const sanitizedQuery = helper(query)
-        const result = await postCollection.find({blogId: id})
+        const result = await postCollection.find({blogId: id}, {projection: {_id: 0}})
             .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
             .limit(sanitizedQuery.pageSize)
             .skip((sanitizedQuery.pageNumber-1)*sanitizedQuery.pageSize)
             .toArray()
         const totalCount = await postCollection.countDocuments({blogId: id})
         return {
-            pagesCount: totalCount/sanitizedQuery.pageSize,
+            pagesCount: Math.ceil(totalCount/sanitizedQuery.pageSize),
             page: sanitizedQuery.pageNumber,
             pageSize: sanitizedQuery.pageSize,
             totalCount: totalCount,
@@ -58,14 +58,14 @@ export const posts = {
 
     async returnAllPosts (query: inputQueryType) {
         const sanitizedQuery = helper(query)
-        const result = await postCollection.find({})
+        const result = await postCollection.find({}, {projection: {_id: 0}})
             .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
             .limit(sanitizedQuery.pageSize)
             .skip((sanitizedQuery.pageNumber-1)*sanitizedQuery.pageSize)
             .toArray()
         const totalCount = await postCollection.countDocuments({})
         return {
-            pagesCount: totalCount/sanitizedQuery.pageSize,
+            pagesCount: Math.ceil(totalCount/sanitizedQuery.pageSize),
             page: sanitizedQuery.pageNumber,
             pageSize: sanitizedQuery.pageSize,
             totalCount: totalCount,

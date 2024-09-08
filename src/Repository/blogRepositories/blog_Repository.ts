@@ -17,7 +17,7 @@ export const blog = {
         const totalCount = await blogCollection.countDocuments(filter)
 
         return {
-            pagesCount: totalCount/sanitizedQuery.pageSize,
+            pagesCount: Math.ceil(totalCount/sanitizedQuery.pageSize),
             page: sanitizedQuery.pageNumber,
             pageSize: sanitizedQuery.pageSize,
             totalCount: totalCount,

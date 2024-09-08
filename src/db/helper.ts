@@ -6,6 +6,6 @@ export const helper = (query: {[key:string]: string | undefined }) => {
         pageSize: query.pageSize !== undefined ? +query.pageSize : 10,
         sortBy: query.sortBy ? query.sortBy : 'createdAt',
         sortDirection: query.sortDirection ? query.sortDirection as SortDirection : 'desc',
-        searchNameTerm: query.searchNameTerm ? query.searchNameTerm : null,
+        searchNameTerm: query.searchNameTerm ? query.searchNameTerm : undefined,
     }
 }
