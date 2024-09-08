@@ -6,7 +6,7 @@ import {blog} from "../Repository/blogRepositories/blog_Repository";
 export const createPostService = async (body:postsInputType, blogId?: string) => {
         const id = body.blogId ? body.blogId : blogId
         const neededBlog = await blog.findByID(id!);
-        if (neededBlog !== null) {
+        if (neededBlog !== null ) {
             const idOfNeededPost = await posts.create(body, neededBlog)
             return await posts.findPostById(idOfNeededPost)
         }else return undefined
