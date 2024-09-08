@@ -3,9 +3,9 @@ import {blogsInputType, inputQueryType} from "../db/Types";
 import {posts} from "../Repository/postRepositories/posts_repository";
 
 
-export const createBlogService = (body: blogsInputType) => {
-    blog.create(body)
-    return blog.findByName(body.name)
+export const createBlogService = async (body: blogsInputType) => {
+    await blog.create(body)
+    return await blog.findByName(body.name)
 }
 
 export const updateBlogService = async (id:string, body: blogsInputType) => {
