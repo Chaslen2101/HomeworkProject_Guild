@@ -1,17 +1,17 @@
-import {Router, Request, Response} from "express";
-import {authorizationCheck} from "../middleware/authorizationCheck";
+import {Router} from "express";
+import {authorizationCheck} from "../middleware/globalMiddleware/authorizationCheck";
 import {inputPostsValidation} from "../middleware/post_Middleware/posts_validator";
-import {inputErrorCheckValidator} from "../middleware/inputCheckErrorValidator";
+import {inputErrorCheckValidator} from "../middleware/globalMiddleware/inputCheckErrorValidator";
 import {
     deletePostById,
     findPostById,
-    inputPostController, returnAllPosts,
+    inputPostController, returnAllPostsController,
     updatePostByID
-} from "../middleware/post_Middleware/posts_controller";
+} from "../Controllers/postControllers/post_controller";
 
 export const postsRouter = Router({})
 
-postsRouter.get("/", returnAllPosts)
+postsRouter.get("/", returnAllPostsController)
 postsRouter.post("/", authorizationCheck,inputPostsValidation(), inputErrorCheckValidator,inputPostController)
 postsRouter.get("/:id", findPostById)
 postsRouter.put("/:id", authorizationCheck, inputPostsValidation(), inputErrorCheckValidator,updatePostByID)

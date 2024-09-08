@@ -1,4 +1,4 @@
-import {httpStatuses} from "../settings";
+import {httpStatuses} from "../../settings";
 import {validationResult} from "express-validator";
 import {Request, Response, NextFunction} from "express";
 

@@ -34,4 +34,8 @@ export type DB_Type = {
     existingBlogs: blogsViewType[]
     existingPosts: postsViewType[]
 }
+
+export type inputQueryType = {
+    [key:string]: string | undefined
+}
 // export type fieldNamesType = keyof blogsInputType | keyof postsInputType

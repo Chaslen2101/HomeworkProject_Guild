@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {ADMIN_AUTH} from "../settings";
+import {ADMIN_AUTH} from "../../settings";
 
 
 export const fromBase64ToUTF8 = (code: string) => {

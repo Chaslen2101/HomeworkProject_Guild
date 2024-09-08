@@ -1,8 +1,7 @@
 import {body} from "express-validator";
-import {blog} from "../../Repository/blogRepositories/blog_Repository";
 
 
-export const inputPostsValidation = () => {
+export const inputSpecifiedPostValidation = () => {
     return [
         body("title").trim().exists().withMessage("title is required")
             .isString().withMessage("title should be string")
@@ -13,15 +12,6 @@ export const inputPostsValidation = () => {
         body("content").trim().exists().withMessage("content is required")
             .isString().withMessage("content should be string")
             .isLength({min:1,max: 1000}).withMessage("content should be from 1 to 1000 symbols"),
-        body("blogId").trim().exists().withMessage("blogId is required")
-            .isString().withMessage("blogId should be string")
-            .custom(async inputBlogId => {
-                const neededBlog = await blog.findByID(inputBlogId)
-                if (neededBlog) {
-                    return true
-                }
-                throw new Error("there are no existing blogs with this ID")
-            })
     ]
 
 }
