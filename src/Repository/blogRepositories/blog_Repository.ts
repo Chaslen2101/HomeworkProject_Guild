@@ -1,6 +1,7 @@
 import {blogsInputType, blogsViewType, inputQueryType} from "../../db/Types";
 import {blogCollection} from "../../db/MongoDB";
 import {helper} from "../../db/helper";
+import {ObjectId} from "mongodb";
 
 
 export const blog = {
@@ -27,7 +28,7 @@ export const blog = {
 
     async create(newBlog: blogsInputType) {
         const createdBlog: blogsViewType = {
-            id: new Date().toISOString() + Math.random(),
+            id: new ObjectId().toString(),
             name: newBlog.name,
             description: newBlog.description,
             websiteUrl: newBlog.websiteUrl,
