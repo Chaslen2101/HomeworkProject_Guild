@@ -4,8 +4,8 @@ import {posts} from "../Repository/postRepositories/posts_repository";
 
 
 export const createBlogService = async (body: blogsInputType) => {
-    await blog.create(body)
-    return await blog.findByName(body.name)
+    const newBlogId = await blog.create(body)
+    return await blog.findByID(newBlogId)
 }
 
 export const updateBlogService = async (id:string, body: blogsInputType) => {

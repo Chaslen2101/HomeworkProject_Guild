@@ -1,6 +1,6 @@
 import {blogsInputType, blogsViewType, inputQueryType} from "../../db/Types";
 import {blogCollection} from "../../db/MongoDB";
-import {helper} from "../../db/helper";
+import {queryHelper} from "../../db/helper";
 import {ObjectId} from "mongodb";
 
 
@@ -8,7 +8,7 @@ export const blog = {
 
     async findMany(query: inputQueryType) {
 
-        const sanitizedQuery = helper(query)
+        const sanitizedQuery = queryHelper(query)
         const filter = sanitizedQuery.searchNameTerm ? {name: {$regex: sanitizedQuery.searchNameTerm, $options: "i"}} : {}
         const items = await blogCollection.find(filter, {projection: {_id: 0}})
             .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
@@ -36,16 +36,16 @@ export const blog = {
             isMembership: false
         }
         await blogCollection.insertOne(createdBlog)
-        return true
+        return createdBlog.id
     },
 
     async findByID(id: string) {
         return await blogCollection.findOne({id: id}, {projection: {_id: 0}})
     },
 
-    async findByName(name: string) {
-        return await blogCollection.findOne({name: name}, {projection: {_id: 0}})
-    },
+    // async findByName(name: string) {
+    //     return await blogCollection.findOne({name: name}, {projection: {_id: 0}})
+    // },
 
     async delete(id: string) {
         await blogCollection.deleteOne({id: id})

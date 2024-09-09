@@ -1,6 +1,7 @@
 import {inputQueryType, postsInputType, postsViewType} from "../../db/Types";
 import {postCollection} from "../../db/MongoDB";
-import {helper} from "../../db/helper";
+import {queryHelper} from "../../db/helper";
+import {ObjectId} from "mongodb";
 
 
 export const posts = {
@@ -12,7 +13,7 @@ export const posts = {
     async create(inputData: postsInputType, blog: any) {
 
         const newPost: postsViewType = {
-            id: new Date().toISOString() + Math.random(),
+            id: new ObjectId().toString(),
             title: inputData.title,
             shortDescription: inputData.shortDescription,
             content: inputData.content,
@@ -40,7 +41,7 @@ export const posts = {
     },
 
     async findAllPostsByBlogId(id:string, query: inputQueryType) {
-        const sanitizedQuery = helper(query)
+        const sanitizedQuery = queryHelper(query)
         const result = await postCollection.find({blogId: id}, {projection: {_id: 0}})
             .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
             .limit(sanitizedQuery.pageSize)
@@ -57,7 +58,7 @@ export const posts = {
     },
 
     async returnAllPosts (query: inputQueryType) {
-        const sanitizedQuery = helper(query)
+        const sanitizedQuery = queryHelper(query)
         const result = await postCollection.find({}, {projection: {_id: 0}})
             .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
             .limit(sanitizedQuery.pageSize)
