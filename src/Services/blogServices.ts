@@ -24,6 +24,6 @@ export const deleteBlogService = async (id:string) => {
 export const allPostsInBlogService = async (id:string, query: inputQueryType) => {
     const neededBlog = await blog.findByID(id)
     if (neededBlog) {
-        return await posts.findAllPostsByBlogId(id, query)
+        return await posts.findMany(query,id)
     }else return undefined
 }

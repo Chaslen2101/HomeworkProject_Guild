@@ -43,10 +43,6 @@ export const blog = {
         return await blogCollection.findOne({id: id}, {projection: {_id: 0}})
     },
 
-    // async findByName(name: string) {
-    //     return await blogCollection.findOne({name: name}, {projection: {_id: 0}})
-    // },
-
     async delete(id: string) {
         await blogCollection.deleteOne({id: id})
     },

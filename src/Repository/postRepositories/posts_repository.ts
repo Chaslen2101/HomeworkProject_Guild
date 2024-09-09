@@ -40,14 +40,15 @@ export const posts = {
         await postCollection.deleteOne({id: id})
     },
 
-    async findAllPostsByBlogId(id:string, query: inputQueryType) {
+    async findMany (query:inputQueryType, id?: string) {
         const sanitizedQuery = queryHelper(query)
-        const result = await postCollection.find({blogId: id}, {projection: {_id: 0}})
+        const filter = id ? {blogId: id} : {}
+        const result = await postCollection.find(filter, {projection: {_id: 0}})
             .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
             .limit(sanitizedQuery.pageSize)
             .skip((sanitizedQuery.pageNumber-1)*sanitizedQuery.pageSize)
             .toArray()
-        const totalCount = await postCollection.countDocuments({blogId: id})
+        const totalCount = await postCollection.countDocuments(filter)
         return {
             pagesCount: Math.ceil(totalCount/sanitizedQuery.pageSize),
             page: sanitizedQuery.pageNumber,
@@ -57,20 +58,20 @@ export const posts = {
         }
     },
 
-    async returnAllPosts (query: inputQueryType) {
-        const sanitizedQuery = queryHelper(query)
-        const result = await postCollection.find({}, {projection: {_id: 0}})
-            .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
-            .limit(sanitizedQuery.pageSize)
-            .skip((sanitizedQuery.pageNumber-1)*sanitizedQuery.pageSize)
-            .toArray()
-        const totalCount = await postCollection.countDocuments({})
-        return {
-            pagesCount: Math.ceil(totalCount/sanitizedQuery.pageSize),
-            page: sanitizedQuery.pageNumber,
-            pageSize: sanitizedQuery.pageSize,
-            totalCount: totalCount,
-            items: result
-        }
-    }
+    // async returnAllPosts (query: inputQueryType) {
+    //     const sanitizedQuery = queryHelper(query)
+    //     const result = await postCollection.find({}, {projection: {_id: 0}})
+    //         .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
+    //         .limit(sanitizedQuery.pageSize)
+    //         .skip((sanitizedQuery.pageNumber-1)*sanitizedQuery.pageSize)
+    //         .toArray()
+    //     const totalCount = await postCollection.countDocuments({})
+    //     return {
+    //         pagesCount: Math.ceil(totalCount/sanitizedQuery.pageSize),
+    //         page: sanitizedQuery.pageNumber,
+    //         pageSize: sanitizedQuery.pageSize,
+    //         totalCount: totalCount,
+    //         items: result
+    //     }
+    // }
 }

@@ -4,7 +4,7 @@ import {httpStatuses} from "../../settings";
 import {createPostService, deletePostService, updatePostService} from "../../Services/postServices";
 
 export const returnAllPostsController = async (req: Request, res: Response) => {
-    const allPosts = await posts.returnAllPosts(req.query as {[key: string] : string | undefined})
+    const allPosts = await posts.findMany(req.query as {[key: string] : string | undefined})
     res
         .status(httpStatuses.OK_200)
         .json(allPosts)
