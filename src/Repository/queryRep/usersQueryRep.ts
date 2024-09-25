@@ -6,13 +6,11 @@ export const usersQueryRep = {
 
     async findUserByLoginOrEmail (loginOrEmail: string) {
         return await userCollection.findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]}, {projection: {_id: 0}});
-
-        // if (neededUser) return mapUserData(neededUser)
     },
 
     async findUserById (id: string) {
         const neededUser = await userCollection.findOne({id: id,},{projection: {_id: 0}})
-        if (neededUser) return mapUserData(neededUser)
+        return mapUserData(neededUser)
     },
 
     async findMany (query: inputQueryType) {

@@ -60,13 +60,13 @@ export const deleteBlogByID = async (req: Request, res: Response) => {
 }
 
 export const findPostsOfBlogController = async (req: Request, res: Response) => {
-    const neededBlog = await blogsQueryRep.findByID(req.params.id)
+    const neededBlog = await blogsQueryRep.findByID(req.params.blogId)
     if (!neededBlog) res.status(httpStatuses.NOT_FOUND_404).json({})
     res.status(httpStatuses.OK_200).json(await postsQueryRep.findMany(req.query as inputQueryType, req.params.id))
 }
 
 export const createPostForBlogController = async (req: Request, res: Response) => {
-    const neededBlog = await blogsQueryRep.findByID(req.params.id)
+    const neededBlog = await blogsQueryRep.findByID(req.params.blogId)
     if (neededBlog) {
         const newPostId = await createPostService(req.body, neededBlog)
         res.status(httpStatuses.CREATED_201).json(await postsQueryRep.findPostById(newPostId))
