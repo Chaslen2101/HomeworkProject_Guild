@@ -69,7 +69,12 @@ export const createPostForBlogController = async (req: Request, res: Response) =
     const neededBlog = await blogsQueryRep.findByID(req.params.blogId)
     if (neededBlog) {
         const newPostId = await createPostService(req.body, neededBlog)
-        res.status(httpStatuses.CREATED_201).json(await postsQueryRep.findPostById(newPostId))
+        res
+            .status(httpStatuses.CREATED_201)
+            .json(await postsQueryRep.findPostById(newPostId))
+    }else {
+        res
+            .status(httpStatuses.NOT_FOUND_404)
+            .json({})
     }
-    res.status(httpStatuses.NOT_FOUND_404).json({})
 }

@@ -13,7 +13,7 @@ export const createUserController = async (req: Request<{},{},inputUserType>, re
     }catch (error) {
         res
             .status(httpStatuses.BAD_REQUEST_400)
-            .json({"errorsMessages":[{message: `${error} should be uniq`,field: error}]})
+            .json({"errorsMessages":[{message: `${error} should be uniq`,field: `${error}`}]})
     }
 }
 
