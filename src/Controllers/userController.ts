@@ -5,21 +5,16 @@ import {usersQueryRep} from "../Repository/queryRep/usersQueryRep";
 import {httpStatuses} from "../settings";
 
 export const createUserController = async (req: Request<{},{},inputUserType>, res: Response) => {
-
+    try {
         const newUserId = await createUserService(req.body)
-        if (newUserId === "Login") {
-            res
-                .status(httpStatuses.BAD_REQUEST_400)
-                .json({"errorsMessages":[{message: `login should be uniq`,field: `login`}]})
-        } else if (newUserId === "Email") {
-            res
-                .status(httpStatuses.BAD_REQUEST_400)
-                .json({"errorsMessages":[{message: `email should be uniq`,field: `email`}]})
-        }else {
-            res
-                .status(httpStatuses.CREATED_201)
-                .json(await usersQueryRep.findUserById(newUserId))
-        }
+        res
+            .status(httpStatuses.CREATED_201)
+            .json(await usersQueryRep.findUserById(newUserId))
+    }catch (error) {
+        res
+            .status(httpStatuses.BAD_REQUEST_400)
+            .json({"errorsMessages":[{message: `${error} should be uniq`,field: `${error}`}]})
+    }
 }
 
 export const getUsersController = async (req: Request, res: Response) => {

@@ -1,4 +1,4 @@
-import {blogsPostsQueryType, blogsViewType, inputQueryType} from "../../Features/Types";
+import {blogsPostsQueryType,inputQueryType} from "../../Features/Types";
 import {queryHelper} from "../../Features/helper";
 import {blogCollection} from "../../db/MongoDB";
 
@@ -24,6 +24,6 @@ export const blogsQueryRep = {
     },
 
     async findByID(id: string) {
-        return await blogCollection.findOne({id: id}, {projection: {_id: 0}}) as blogsViewType | null
+        return await blogCollection.findOne({id: id}, {projection: {_id: 0}})
     },
 }

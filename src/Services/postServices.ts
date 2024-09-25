@@ -1,7 +1,7 @@
 import {posts} from "../Repository/postsRepository";
-import {blogsViewType, postsInputType} from "../Features/Types";
+import {postsInputType} from "../Features/Types";
 
-export const createPostService = async (body:postsInputType, neededBlog: blogsViewType) => {
+export const createPostService = async (body:postsInputType, neededBlog: any) => {
         return await posts.create(body, neededBlog)
     }
 
