@@ -1,6 +1,6 @@
 import {body} from "express-validator";
 
-import {usersQueryRep} from "../Repository/queryRep/userQueryRep";
+import {usersQueryRep} from "../Repository/queryRep/usersQueryRep";
 
 export const createUserValidator = () => {
     return [

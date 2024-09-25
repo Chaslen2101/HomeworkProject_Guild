@@ -1,5 +1,5 @@
 import {body} from "express-validator";
-import {blog} from "../../Repository/blog_Repository";
+import {blogsQueryRep} from "../../Repository/queryRep/blogsQueryRep";
 
 
 export const inputPostsValidation = () => {
@@ -16,7 +16,7 @@ export const inputPostsValidation = () => {
         body("blogId").trim().exists().withMessage("blogId is required")
             .isString().withMessage("blogId should be string")
             .custom(async inputBlogId => {
-                const neededBlog = await blog.findByID(inputBlogId)
+                const neededBlog = await blogsQueryRep.findByID(inputBlogId)
                 if (!neededBlog)
                     throw new Error("there are no existing blogs with this ID")
             })
