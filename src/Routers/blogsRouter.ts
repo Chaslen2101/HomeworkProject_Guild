@@ -17,5 +17,5 @@ blogRouter.post("/", authorizationCheck,inputBlogsValidation(), inputErrorCheckV
 blogRouter.get("/:id",findBlogByIdController)
 blogRouter.put("/:id", authorizationCheck,inputBlogsValidation(), inputErrorCheckValidator, updateBlogById)
 blogRouter.delete("/:id",authorizationCheck,deleteBlogByID)
-blogRouter.get("/:BlogId/posts", findPostsOfBlogController)
+blogRouter.get("/:blogId/posts", findPostsOfBlogController)
 blogRouter.post("/:blogId/posts", authorizationCheck,inputSpecifiedPostValidation(),inputErrorCheckValidator, createPostForBlogController)

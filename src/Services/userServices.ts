@@ -5,9 +5,9 @@ import {usersQueryRep} from "../Repository/queryRep/usersQueryRep";
 export const createUserService = async (newUserData: inputUserType) => {
 
     if(await usersQueryRep.findUserByLoginOrEmail(newUserData.email)) {
-        throw new Error("email")
+        return "Email"
     }else if(await usersQueryRep.findUserByLoginOrEmail(newUserData.login)) {
-        throw new Error("login")
+        return "Login"
     }else return await usersRepository.createUser(newUserData)
 }
 
