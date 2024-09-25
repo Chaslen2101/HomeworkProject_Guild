@@ -8,7 +8,7 @@ export const inputErrorCheckValidator = (req: Request, res: Response, next: Next
 
     if (!errors.isEmpty()) {
         const errorsArray = errors.array() as { path: string, msg: string }[]
-        console.log(errorsArray)
+
         const filteredArray:{path: string, msg: string}[] = []
 
         for (let errorObject of errorsArray) {

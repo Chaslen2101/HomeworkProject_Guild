@@ -20,6 +20,7 @@ export const httpStatuses = {
 export const mongoSettings = {
     dbName : "guild-dev",
     blogCollectionName : "blogs",
-    postCollectionName : "posts"
+    postCollectionName : "posts",
+    userCollectionName : "users"
 }
 export const ADMIN_AUTH = "admin:qwerty"

@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 dotenv.config()
-import {MongoClient, ServerApiVersion} from 'mongodb';
+import {MongoClient} from 'mongodb';
 import {mongoSettings} from "../settings";
 
 const url = process.env.MONGO_URL
@@ -12,6 +12,7 @@ const client = new MongoClient(url)
 export const db = client.db(mongoSettings.dbName)
 export const blogCollection = db.collection(mongoSettings.blogCollectionName)
 export const postCollection = db.collection(mongoSettings.postCollectionName)
+export const userCollection = db.collection(mongoSettings.userCollectionName)
 
 export const runDB = async () => {
     try {

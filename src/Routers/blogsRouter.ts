@@ -1,13 +1,13 @@
 import {Router} from "express"
-import {inputErrorCheckValidator} from "../middleware/globalMiddleware/inputCheckErrorValidator";
+import {inputErrorCheckValidator} from "../Features/globalFeatures/inputCheckErrorValidator";
 import {
-    createBlogController, createPostForSpecifiedBlog, deleteBlogByID,
-    findBlogByIdController,findPostsOfSpecifiedBlog, returnAllBlogsController,
+    createBlogController, createPostForBlogController, deleteBlogByID,
+    findBlogByIdController,findPostsOfBlogController, returnAllBlogsController,
     updateBlogById
-} from "../Controllers/blogControllers/blog_controllers";
-import {inputBlogsValidation} from "../middleware/blog_Middleware/blog_validator";
-import {authorizationCheck} from "../middleware/globalMiddleware/authorizationCheck";
-import {inputSpecifiedPostValidation} from "../middleware/post_Middleware/postForSpecifiedBlog_validator";
+} from "../Controllers/blog_controllers";
+import {inputBlogsValidation} from "../Features/blogFeatures/blog_validator";
+import {authorizationCheck} from "../Features/globalFeatures/authorizationCheck";
+import {inputSpecifiedPostValidation} from "../Features/postFeatures/postForSpecifiedBlog_validator";
 
 
 export const blogRouter = Router({})
@@ -17,5 +17,5 @@ blogRouter.post("/", authorizationCheck,inputBlogsValidation(), inputErrorCheckV
 blogRouter.get("/:id",findBlogByIdController)
 blogRouter.put("/:id", authorizationCheck,inputBlogsValidation(), inputErrorCheckValidator, updateBlogById)
 blogRouter.delete("/:id",authorizationCheck,deleteBlogByID)
-blogRouter.get("/:blogId/posts", findPostsOfSpecifiedBlog)
-blogRouter.post("/:blogId/posts", authorizationCheck,inputSpecifiedPostValidation(),inputErrorCheckValidator, createPostForSpecifiedBlog)
+blogRouter.get("/:id/posts", findPostsOfBlogController)
+blogRouter.post("/:id/posts", authorizationCheck,inputSpecifiedPostValidation(),inputErrorCheckValidator, createPostForBlogController)
