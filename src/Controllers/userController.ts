@@ -5,10 +5,16 @@ import {usersQueryRep} from "../Repository/queryRep/usersQueryRep";
 import {httpStatuses} from "../settings";
 
 export const createUserController = async (req: Request<{},{},inputUserType>, res: Response) => {
-    const newUserId = await createUserService(req.body)
-    res
-        .status(httpStatuses.CREATED_201)
-        .json(await usersQueryRep.findUserById(newUserId))
+    try {
+        const newUserId = await createUserService(req.body)
+        res
+            .status(httpStatuses.CREATED_201)
+            .json(await usersQueryRep.findUserById(newUserId))
+    }catch (error) {
+        res
+            .status(httpStatuses.BAD_REQUEST_400)
+            .json({"errorsMessages":[{message: `${error} should be uniq`,field: error}]})
+    }
 }
 
 export const getUsersController = async (req: Request, res: Response) => {
@@ -19,9 +25,13 @@ export const getUsersController = async (req: Request, res: Response) => {
 
 export const deleteUserController = async (req: Request, res: Response) => {
 
-    if (!await usersQueryRep.findUserById(req.params.id)) res.status(httpStatuses.NOT_FOUND_404).json({})
-    await deleteUserService(req.params.id)
-    res
-        .status(httpStatuses.NO_CONTENT_204)
-        .json({})
+    const isDeleted = await deleteUserService(req.params.id)
+    if (isDeleted) {
+        res
+            .status(httpStatuses.NO_CONTENT_204)
+            .json({})
+    }else {
+        res
+            .status(httpStatuses.NOT_FOUND_404).json({})
+    }
 }

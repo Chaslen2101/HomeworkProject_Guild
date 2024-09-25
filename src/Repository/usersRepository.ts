@@ -19,7 +19,7 @@ export const usersRepository = {
         return newUser.id
     },
     async deleteUser (id: string) {
-       await userCollection.deleteOne({id: id})
-       return
+       const result = await userCollection.deleteOne({id: id})
+       return result.deletedCount !== 0
     }
 }
