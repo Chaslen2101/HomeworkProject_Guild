@@ -1,4 +1,4 @@
-import {Response} from "express"
+import {Response, Request} from "express"
 import express from "express"
 import cors from "cors"
 import {httpStatuses} from "./settings";
@@ -12,7 +12,7 @@ export const app = express()
 app.use(cors())
 app.use(express.json())
 
-app.get("/", (res: Response) => {
+app.get("/", (req: Request, res: Response) => {
     res
         .status(httpStatuses.OK_200)
         .send("Current version: 05_01")
