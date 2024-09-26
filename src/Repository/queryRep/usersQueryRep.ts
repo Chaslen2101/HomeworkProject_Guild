@@ -22,7 +22,7 @@ export const usersQueryRep = {
             .toArray()
         const totalCount = await userCollection.countDocuments()
         return {
-            pagesCount: totalCount / sanitizedQuery.pageSize,
+            pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
             page: sanitizedQuery.pageNumber,
             pageSize: sanitizedQuery.pageSize,
             totalCount: totalCount,

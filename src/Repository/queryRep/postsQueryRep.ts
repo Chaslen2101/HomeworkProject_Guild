@@ -5,10 +5,10 @@ import {postCollection} from "../../db/MongoDB";
 export const postsQueryRep = {
     async findMany (query:inputQueryType, id?: string) {
         const sanitizedQuery = queryHelper(query)
-        const filter = id ? {blogId: id} : {}
+        const filter = query.blogId ? {blogId: query.blogId} : id ? {blogId: id} : {}
         const result = await postCollection.find(filter, {projection: {_id: 0}})
             .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
-            .limit(15)
+            .limit(sanitizedQuery.pageSize)
             .skip((sanitizedQuery.pageNumber-1)*sanitizedQuery.pageSize)
             .toArray()
         const totalCount = await postCollection.countDocuments(filter)
