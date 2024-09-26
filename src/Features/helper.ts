@@ -18,14 +18,14 @@ export const hashNewPassword = async (password: string) => {
 
 }
 
-// export const mapUserData = (userData: any) => {
-//     return {
-//         id: userData.id,
-//         login: userData.login,
-//         email: userData.email,
-//         createdAt: userData.createdAt
-//     }
-// }
+export const mapUserData = (userData: any) => {
+    return {
+        id: userData.id,
+        login: userData.login,
+        email: userData.email,
+        createdAt: userData.createdAt
+    }
+}
 
 export const sanitizeUserQuery = (query: { [key: string]: string | undefined }) => {
     return {
