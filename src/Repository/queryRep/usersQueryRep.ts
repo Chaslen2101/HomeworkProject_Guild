@@ -15,8 +15,15 @@ export const usersQueryRep = {
 
     async findMany (query: inputQueryType) {
         const sanitizedQuery: userQueryType = sanitizeUserQuery(query)
-        const filter = sanitizedQuery.searchEmailTerm ? {email: {$regex: sanitizedQuery.searchEmailTerm, $options: "i"}}
-            : sanitizedQuery.searchLoginTerm ? {login:{$regex: sanitizedQuery.searchLoginTerm, $options: "i"}} : {}
+        let filter = {}
+        if (sanitizedQuery.searchLoginTerm && sanitizedQuery.searchEmailTerm) {
+            filter = {$or:[{email:{$regex: sanitizedQuery.searchEmailTerm, $options: "i"}},{login:{$regex: sanitizedQuery.searchLoginTerm, $options:"i"}}]}
+        }else if (!sanitizedQuery.searchLoginTerm && sanitizedQuery.searchEmailTerm) {
+            filter = {email:{$regex: sanitizedQuery.searchEmailTerm, $options: "i"}}
+        }else if (!sanitizedQuery.searchEmailTerm && sanitizedQuery.searchLoginTerm) {
+            filter = {login:{$regex: sanitizedQuery.searchLoginTerm, $options:"i"}}
+        }
+
         const users = await userCollection.find(filter,{projection: {_id: 0,password: 0}})
             .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
             .limit(sanitizedQuery.pageSize)

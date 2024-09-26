@@ -33,8 +33,8 @@ export const sanitizeUserQuery = (query: { [key: string]: string | undefined }) 
         pageSize: query.pageSize !== undefined ? +query.pageSize : 10,
         sortBy: query.sortBy ? query.sortBy : 'createdAt',
         sortDirection: query.sortDirection ? query.sortDirection as SortDirection : 'desc',
-        searchLoginTerm: query.searchNameTerm ? query.searchNameTerm : null,
-        searchEmailTerm: query.searchNameTerm ? query.searchNameTerm : null
+        searchLoginTerm: query.searchLoginTerm ? query.searchLoginTerm : null,
+        searchEmailTerm: query.searchEmailTerm ? query.searchEmailTerm : null
     }
 }
 
