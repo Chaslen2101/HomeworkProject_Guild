@@ -15,12 +15,14 @@ export const usersQueryRep = {
 
     async findMany (query: inputQueryType) {
         const sanitizedQuery: userQueryType = sanitizeUserQuery(query)
-        const users = await userCollection.find({},{projection: {_id: 0,password: 0}})
+        const filter = sanitizedQuery.searchEmailTerm ? {email: {$regex: sanitizedQuery.searchEmailTerm, $options: "i"}}
+            : sanitizedQuery.searchLoginTerm ? {login:{$regex: sanitizedQuery.searchLoginTerm, $options: "i"}} : {}
+        const users = await userCollection.find(filter,{projection: {_id: 0,password: 0}})
             .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
             .limit(sanitizedQuery.pageSize)
             .skip((sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize)
             .toArray()
-        const totalCount = await userCollection.countDocuments()
+        const totalCount = await userCollection.countDocuments(filter)
         return {
             pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
             page: sanitizedQuery.pageNumber,
