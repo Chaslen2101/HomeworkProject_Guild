@@ -68,7 +68,7 @@ export const findPostsOfBlogController = async (req: Request, res: Response) => 
     }else {
         res
             .status(httpStatuses.OK_200)
-            .json(await postsQueryRep.findMany(req.query as inputQueryType, req.params.id))
+            .json(await postsQueryRep.findMany(req.query as inputQueryType, req.params.blogId))
     }
 }
 
