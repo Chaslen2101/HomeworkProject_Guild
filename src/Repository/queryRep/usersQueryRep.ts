@@ -15,7 +15,7 @@ export const usersQueryRep = {
 
     async findMany (query: inputQueryType) {
         const sanitizedQuery: userQueryType = sanitizeUserQuery(query)
-        const users = await userCollection.find({},{projection: {_id: 0}})
+        const users = await userCollection.find({},{projection: {_id: 0,password: 0}})
             .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
             .limit(sanitizedQuery.pageSize)
             .skip((sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize)

@@ -3,7 +3,7 @@ import {Request, Response} from "express"
 import {inputQueryType, inputUserType} from "../Features/Types";
 import {usersQueryRep} from "../Repository/queryRep/usersQueryRep";
 import {httpStatuses} from "../settings";
-import {mapUserData} from "../Features/helper";
+
 
 export const createUserController = async (req: Request<{},{},inputUserType>, res: Response) => {
     try {
@@ -21,7 +21,7 @@ export const createUserController = async (req: Request<{},{},inputUserType>, re
 export const getUsersController = async (req: Request, res: Response) => {
     res
         .status(httpStatuses.OK_200)
-        .json(mapUserData(usersQueryRep.findMany(req.query as inputQueryType)))
+        .json(await usersQueryRep.findMany(req.query as inputQueryType))
 }
 
 export const deleteUserController = async (req: Request, res: Response) => {
