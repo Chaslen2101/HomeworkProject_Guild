@@ -8,7 +8,7 @@ export const postsQueryRep = {
         const filter = id ? {blogId: id} : {}
         const result = await postCollection.find(filter, {projection: {_id: 0}})
             .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
-            .limit(sanitizedQuery.pageSize)
+            .limit(15)
             .skip((sanitizedQuery.pageNumber-1)*sanitizedQuery.pageSize)
             .toArray()
         const totalCount = await postCollection.countDocuments(filter)
