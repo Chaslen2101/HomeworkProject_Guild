@@ -1,13 +1,13 @@
 import {userCollection} from "../db/MongoDB";
-import {existUserType, inputUserType} from "../Features/Types";
-import {hashNewPassword} from "../Features/helper";
+import {existUserType, inputUserType} from "../Types/Types";
 import {ObjectId} from "mongodb";
+import {hashHelper} from "../Features/globalFeatures/helper";
 
 
 export const usersRepository = {
 
     async createUser (newUserData: inputUserType) {
-        const hashedPassword = await hashNewPassword(newUserData.password)
+        const hashedPassword = await hashHelper.hashNewPassword(newUserData.password)
         const newUser: existUserType = {
             id: new ObjectId().toString(),
             login: newUserData.login,

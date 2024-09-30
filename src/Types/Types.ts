@@ -1,5 +1,9 @@
 import {SortDirection} from "mongodb";
 
+export type inputQueryType = {
+    [key:string]: string | undefined
+}
+
 export type blogsViewType = {
     id: string
     name: string
@@ -13,6 +17,14 @@ export type blogsInputType = {
     name: string
     description: string
     websiteUrl: string
+}
+
+export type blogsPostsQueryType = {
+    pageNumber: number,
+    pageSize: number,
+    sortBy: string,
+    sortDirection: SortDirection,
+    searchNameTerm: string | undefined,
 }
 
 export type postsViewType = {
@@ -37,6 +49,13 @@ export type userLoginInputType = {
     password: string
 }
 
+export type userViewType = {
+    id: string,
+    login: string,
+    email:string,
+    createdAt: string
+}
+
 export type inputUserType = {
     login: string,
     password: string,
@@ -51,10 +70,6 @@ export type existUserType = {
     createdAt: string
 }
 
-export type inputQueryType = {
-    [key:string]: string | undefined
-}
-
 export type userQueryType = {
     pageNumber: number,
     pageSize: number,
@@ -64,10 +79,29 @@ export type userQueryType = {
     searchEmailTerm: string | null
 }
 
-export type blogsPostsQueryType = {
+export type commentatorInfoType = {
+    userId: string,
+    userLogin: string
+}
+
+export type commentType = {
+    id: string
+    content: string
+    commentatorInfo: commentatorInfoType,
+    createdAt: string
+    postId: string
+}
+
+export type commentViewType = {
+    id: string
+    content: string
+    commentatorInfo: commentatorInfoType,
+    createdAt: string
+}
+
+export type commentQueryType = {
     pageNumber: number,
     pageSize: number,
     sortBy: string,
-    sortDirection: SortDirection,
-    searchNameTerm: string | undefined,
+    sortDirection: SortDirection
 }

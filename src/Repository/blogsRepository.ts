@@ -1,4 +1,4 @@
-import {blogsInputType, blogsViewType} from "../Features/Types";
+import {blogsInputType, blogsViewType} from "../Types/Types";
 import {blogCollection} from "../db/MongoDB";
 import {ObjectId} from "mongodb";
 

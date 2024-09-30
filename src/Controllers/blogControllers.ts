@@ -1,10 +1,10 @@
 import {Request, Response} from "express";
 import {httpStatuses} from "../settings";
-import {createBlogService,deleteBlogService,updateBlogService} from "../Services/blogServices";
-import {createPostService} from "../Services/postServices";
 import {blogsQueryRep} from "../Repository/queryRep/blogsQueryRep";
-import {inputQueryType} from "../Features/Types";
+import {inputQueryType} from "../Types/Types";
 import {postsQueryRep} from "../Repository/queryRep/postsQueryRep";
+import {blogService} from "../Services/blogServices";
+import {postService} from "../Services/postServices";
 
 
 export const returnAllBlogsController = async (req: Request, res: Response) => {
@@ -14,7 +14,7 @@ export const returnAllBlogsController = async (req: Request, res: Response) => {
 }
 
 export const createBlogController = async (req: Request, res: Response) => {
-    const createdBlogId = await createBlogService(req.body)
+    const createdBlogId = await blogService.createBlog(req.body)
     res
         .status(httpStatuses.CREATED_201)
         .json(await blogsQueryRep.findByID(createdBlogId))
@@ -34,7 +34,7 @@ export const findBlogByIdController = async (req: Request, res: Response) => {
 }
 
 export const updateBlogById = async (req: Request, res: Response) => {
-    const isUpdated = await updateBlogService(req.params.id, req.body)
+    const isUpdated = await blogService.updateBlog(req.params.id, req.body)
     if (isUpdated) {
         res
             .status(httpStatuses.NO_CONTENT_204)
@@ -47,7 +47,7 @@ export const updateBlogById = async (req: Request, res: Response) => {
 }
 
 export const deleteBlogByID = async (req: Request, res: Response) => {
-    const isDeleted = await deleteBlogService(req.params.id)
+    const isDeleted = await blogService.deleteBlog(req.params.id)
     if (isDeleted) {
         res
             .status(httpStatuses.NO_CONTENT_204)
@@ -75,7 +75,7 @@ export const findPostsOfBlogController = async (req: Request, res: Response) => 
 export const createPostForBlogController = async (req: Request, res: Response) => {
     const neededBlog = await blogsQueryRep.findByID(req.params.blogId)
     if (neededBlog) {
-        const newPostId = await createPostService(req.body, neededBlog)
+        const newPostId = await postService.createPost(req.body, neededBlog)
         res
             .status(httpStatuses.CREATED_201)
             .json(await postsQueryRep.findPostById(newPostId))

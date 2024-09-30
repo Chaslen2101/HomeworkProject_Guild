@@ -13,6 +13,7 @@ export const db = client.db(mongoSettings.dbName)
 export const blogCollection = db.collection(mongoSettings.blogCollectionName)
 export const postCollection = db.collection(mongoSettings.postCollectionName)
 export const userCollection = db.collection(mongoSettings.userCollectionName)
+export const commentCollection = db.collection(mongoSettings.commentCollectionName)
 
 export const runDB = async () => {
     try {

@@ -1,6 +1,6 @@
 import {userCollection} from "../../db/MongoDB";
-import {mapUserData, sanitizeUserQuery} from "../../Features/helper";
-import {inputQueryType, userQueryType} from "../../Features/Types";
+import {userQueryType, userViewType} from "../../Types/Types";
+import {mapToView} from "../../Features/globalFeatures/helper";
 
 export const usersQueryRep = {
 
@@ -9,12 +9,10 @@ export const usersQueryRep = {
     },
 
     async findUserById (id: string) {
-        const neededUser = await userCollection.findOne({id: id,},{projection: {_id: 0}})
-        return mapUserData(neededUser)
+        return await userCollection.findOne({id: id,},{projection: {_id: 0}})
     },
 
-    async findMany (query: inputQueryType) {
-        const sanitizedQuery: userQueryType = sanitizeUserQuery(query)
+    async findMany (sanitizedQuery: userQueryType) {
         let filter = {}
         if (sanitizedQuery.searchLoginTerm && sanitizedQuery.searchEmailTerm) {
             filter = {$or:[{email:{$regex: sanitizedQuery.searchEmailTerm, $options: "i"}},{login:{$regex: sanitizedQuery.searchLoginTerm, $options:"i"}}]}
@@ -24,12 +22,13 @@ export const usersQueryRep = {
             filter = {login:{$regex: sanitizedQuery.searchLoginTerm, $options:"i"}}
         }
 
-        const users = await userCollection.find(filter,{projection: {_id: 0,password: 0}})
+        const items = await userCollection.find(filter,{projection: {_id: 0}})
             .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
             .limit(sanitizedQuery.pageSize)
             .skip((sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize)
             .toArray()
         const totalCount = await userCollection.countDocuments(filter)
+        const users: userViewType[] = mapToView.mapUsers(items)
         return {
             pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
             page: sanitizedQuery.pageNumber,

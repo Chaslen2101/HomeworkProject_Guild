@@ -1,18 +1,22 @@
 import {Router} from "express";
-import {authorizationCheck} from "../Features/globalFeatures/authorizationCheck";
-import {inputPostsValidation} from "../Features/postFeatures/posts_validator";
+import {base64AuthorizationCheck, tokenAuthCheck} from "../Features/globalFeatures/authorizationCheck";
+import {inputPostsValidation} from "../Features/validators/postValidator";
 import {inputErrorCheckValidator} from "../Features/globalFeatures/inputCheckErrorValidator";
 import {
     deletePostById,
     findPostById,
     inputPostController, returnAllPostsController,
     updatePostByID
-} from "../Controllers/post_controller";
+} from "../Controllers/postController";
+import {commentInputValidator} from "../Features/validators/commentValidator";
+import {createCommentForPost, getCommentsForPost} from "../Controllers/commentsController";
 
 export const postsRouter = Router({})
 
 postsRouter.get("/", returnAllPostsController)
-postsRouter.post("/", authorizationCheck,inputPostsValidation(), inputErrorCheckValidator,inputPostController)
+postsRouter.post("/", base64AuthorizationCheck,inputPostsValidation(), inputErrorCheckValidator,inputPostController)
 postsRouter.get("/:id", findPostById)
-postsRouter.put("/:id", authorizationCheck, inputPostsValidation(), inputErrorCheckValidator,updatePostByID)
-postsRouter.delete("/:id",authorizationCheck,deletePostById)
+postsRouter.put("/:id", base64AuthorizationCheck, inputPostsValidation(), inputErrorCheckValidator,updatePostByID)
+postsRouter.delete("/:id",base64AuthorizationCheck,deletePostById)
+postsRouter.post("/:postId/comments", tokenAuthCheck, commentInputValidator(), inputErrorCheckValidator, createCommentForPost)
+postsRouter.get("/:postId/comments", getCommentsForPost)

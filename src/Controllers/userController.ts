@@ -1,16 +1,23 @@
-import {createUserService, deleteUserService} from "../Services/userServices";
 import {Request, Response} from "express"
-import {inputQueryType, inputUserType} from "../Features/Types";
+import {inputQueryType, inputUserType, userQueryType} from "../Types/Types";
 import {usersQueryRep} from "../Repository/queryRep/usersQueryRep";
 import {httpStatuses} from "../settings";
+import {queryHelper} from "../Features/globalFeatures/helper";
+import {userService} from "../Services/userServices";
 
 
 export const createUserController = async (req: Request<{},{},inputUserType>, res: Response) => {
     try {
-        const newUserId = await createUserService(req.body)
+        const newUserId = await userService.createUser(req.body)
+        const newUser = await usersQueryRep.findUserById(newUserId)
         res
             .status(httpStatuses.CREATED_201)
-            .json(await usersQueryRep.findUserById(newUserId))
+            .json({
+                id: newUser!.id,
+                login: newUser!.login,
+                email: newUser!.email,
+                createdAt: newUser!.createdAt
+            })
     }catch (error) {
         res
             .status(httpStatuses.BAD_REQUEST_400)
@@ -19,14 +26,15 @@ export const createUserController = async (req: Request<{},{},inputUserType>, re
 }
 
 export const getUsersController = async (req: Request, res: Response) => {
+    const sanitizedQuery: userQueryType = queryHelper.userQuery(req.query as inputQueryType)
     res
         .status(httpStatuses.OK_200)
-        .json(await usersQueryRep.findMany(req.query as inputQueryType))
+        .json(await usersQueryRep.findMany(sanitizedQuery))
 }
 
 export const deleteUserController = async (req: Request, res: Response) => {
 
-    const isDeleted = await deleteUserService(req.params.id)
+    const isDeleted = await userService.deleteUser(req.params.id)
     if (isDeleted) {
         res
             .status(httpStatuses.NO_CONTENT_204)

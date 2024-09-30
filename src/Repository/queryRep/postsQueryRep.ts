@@ -1,10 +1,10 @@
-import {inputQueryType} from "../../Features/Types";
-import {queryHelper} from "../../Features/helper";
+import {inputQueryType} from "../../Types/Types";
+import {queryHelper} from "../../Features/globalFeatures/helper";
 import {postCollection} from "../../db/MongoDB";
 
 export const postsQueryRep = {
     async findMany (query:inputQueryType, id?: string) {
-        const sanitizedQuery = queryHelper(query)
+        const sanitizedQuery = queryHelper.blogsPostsQuery(query)
         const filter = query.blogId ? {blogId: query.blogId} : id ? {blogId: id} : {}
         const result = await postCollection.find(filter, {projection: {_id: 0}})
             .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)

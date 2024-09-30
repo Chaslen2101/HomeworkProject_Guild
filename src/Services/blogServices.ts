@@ -1,14 +1,17 @@
 import {blog} from "../Repository/blogsRepository";
-import {blogsInputType} from "../Features/Types";
+import {blogsInputType} from "../Types/Types";
 
-export const createBlogService = async (body: blogsInputType) => {
-    return await blog.create(body)
-}
+export const blogService = {
 
-export const updateBlogService = async (id: string, body: blogsInputType) => {
-    return await blog.update(id, body)
-}
+    async createBlog (body: blogsInputType) {
+        return await blog.create(body)
+    },
 
-export const deleteBlogService = async (id: string) => {
-    return await blog.delete(id)
+    async updateBlog (id: string, body: blogsInputType) {
+        return await blog.update(id, body)
+    },
+
+    async deleteBlog (id: string) {
+        return await blog.delete(id)
+    }
 }

@@ -1,4 +1,4 @@
-import {postsInputType, postsViewType} from "../Features/Types";
+import {postsInputType, postsViewType} from "../Types/Types";
 import {postCollection} from "../db/MongoDB";
 import {ObjectId} from "mongodb";
 

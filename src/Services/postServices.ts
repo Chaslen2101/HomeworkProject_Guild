@@ -1,14 +1,17 @@
 import {posts} from "../Repository/postsRepository";
-import {postsInputType} from "../Features/Types";
+import {postsInputType} from "../Types/Types";
 
-export const createPostService = async (body:postsInputType, neededBlog: any) => {
+export const postService = {
+
+    async createPost (body: postsInputType, neededBlog: any) {
         return await posts.create(body, neededBlog)
-    }
+    },
 
-export const updatePostService = async (id:string, body: postsInputType) => {
-        return await posts.update(id,body)
-}
+    async updatePost(id: string, body: postsInputType) {
+        return await posts.update(id, body)
+    },
 
-export const deletePostService = async (id:string) => {
+    async deletePost (id: string) {
         return await posts.delete(id)
+    }
 }

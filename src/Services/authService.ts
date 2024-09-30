@@ -1,10 +1,13 @@
-import {usersQueryRep} from "../Repository/queryRep/usersQueryRep";
-import {comparePassword} from "../Features/helper";
+import {jwtService} from "./jwtService";
+import {hashHelper} from "../Features/globalFeatures/helper";
 
-export const userLoginService = async (password: string, loginOrEmail: string) => {
-    const neededUser = await usersQueryRep.findUserByLoginOrEmail(loginOrEmail)
-    if (neededUser) {
-        const isPasswordCorrect = await comparePassword(neededUser.password, password)
-        if (isPasswordCorrect) return true
-    }return false
+export const authService = {
+
+    async login(password: string, neededUser: any) {
+
+        const isPasswordCorrect = await hashHelper.comparePassword(neededUser.password, password)
+        if (isPasswordCorrect) {
+            return await jwtService.createToken(neededUser)
+        } else return false
+    },
 }
