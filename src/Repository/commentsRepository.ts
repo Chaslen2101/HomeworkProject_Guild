@@ -1,9 +1,9 @@
-import {commentType, existUserType} from "../Types/Types";
+import {commentType,userViewType} from "../Types/Types";
 import {commentCollection} from "../db/MongoDB";
 import {ObjectId} from "mongodb";
 
 export const commentsRepository = {
-    async create (content: string, userInfo: existUserType, postId: string) {
+    async create (content: string, userInfo: userViewType, postId: string) {
         const newComment: commentType = {
             id: new ObjectId().toString(),
             content: content,

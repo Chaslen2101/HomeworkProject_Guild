@@ -57,8 +57,8 @@ export const tokenAuthCheck = async (req: Request, res: Response, next: NextFunc
             .status(httpStatuses.UNAUTHORIZED_401)
             .json({})
         return
+    }else {
+        req.user = neededUser
+        next()
     }
-    req.user.id = neededUser.id
-    req.user.login = neededUser.login
-    next()
 }

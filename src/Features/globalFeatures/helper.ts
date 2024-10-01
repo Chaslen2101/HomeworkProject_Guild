@@ -1,6 +1,6 @@
 import {SortDirection} from "mongodb";
 import bcrypt from "bcrypt"
-import {inputQueryType} from "../../Types/Types";
+import {inputQueryType, userViewType} from "../../Types/Types";
 
 export const queryHelper = {
 
@@ -48,14 +48,6 @@ export const hashHelper = {
 }
 
 export const mapToView = {
-    // mapUserData (userData: any) {
-    //     return {
-    //         id: userData.id,
-    //         login: userData.login,
-    //         email: userData.email,
-    //         createdAt: userData.createdAt
-    //     }
-    // },
 
     mapComments (comments: any[]) {
         return comments.map(comment => {
@@ -71,6 +63,18 @@ export const mapToView = {
         })
     },
 
+    mapComment (comment: any) {
+        return {
+            id: comment.id,
+            content: comment.content,
+            commentatorInfo: {
+                userId: comment.commentatorInfo.userId,
+                userLogin: comment.commentatorInfo.userLogin
+            },
+            createdAt: comment.createdAt
+        }
+    },
+
     mapUsers (users: any[]) {
         return users.map(user => {
             return {
@@ -82,18 +86,14 @@ export const mapToView = {
         })
     },
 
-    mapComment (comment: any) {
+    mapUser (userData: any): userViewType {
         return {
-            id: comment.id,
-            content: comment.content,
-            commentatorInfo: {
-                userId: comment.commentatorInfo.userId,
-                userLogin: comment.commentatorInfo.userLogin
-            },
-            createdAt: comment.createdAt
+            id: userData.id,
+            login: userData.login,
+            email: userData.email,
+            createdAt: userData.createdAt
         }
-    }
-
+    },
 }
 
 

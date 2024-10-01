@@ -7,7 +7,7 @@ import {mapToView, queryHelper} from "../Features/globalFeatures/helper";
 import {commentQueryType, inputQueryType} from "../Types/Types";
 
 export const createCommentForPost = async (req: Request, res: Response) => {
-    console.log("create comment controller on")
+
     const isPostExists = await postsQueryRep.findPostById(req.params.postId)
     if (!isPostExists) {
         res
@@ -17,8 +17,7 @@ export const createCommentForPost = async (req: Request, res: Response) => {
     }
     const newCommentId: string = await commentService.createComment(req.body, req.user, req.params.postId)
     const newComment = await commentsQueryRep.findCommentById(newCommentId)
-    console.log('Comment for post created successfully')
-    res
+        res
         .status(httpStatuses.CREATED_201)
         .json(mapToView.mapComment(newComment))
 }
@@ -38,10 +37,10 @@ export const getCommentsForPost = async (req: Request, res: Response) => {
 }
 
 export const getCommentsById = async (req: Request, res: Response) => {
-    console.log("get comment controller on")
+
     const neededComment = await commentsQueryRep.findCommentById(req.params.id)
     if (neededComment) {
-        console.log("comment founded successfully")
+
         res
             .status(httpStatuses.OK_200)
             .json(mapToView.mapComment(neededComment))

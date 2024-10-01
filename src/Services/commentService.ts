@@ -1,8 +1,8 @@
-import {existUserType} from "../Types/Types";
+import {userViewType} from "../Types/Types";
 import {commentsRepository} from "../Repository/commentsRepository";
 
 export const commentService = {
-    async createComment(content: string, userInfo: existUserType, postId: string) {
+    async createComment(content: string, userInfo: userViewType, postId: string) {
         return await commentsRepository.create(content, userInfo, postId)
     },
     async updateComment(content: string, id: string){

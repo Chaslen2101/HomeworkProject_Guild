@@ -9,7 +9,7 @@ export const usersQueryRep = {
     },
 
     async findUserById (id: string) {
-        return await userCollection.findOne({id: id,},{projection: {_id: 0}})
+        return mapToView.mapUser(await userCollection.findOne({id: id,},{projection: {_id: 0}}))
     },
 
     async findMany (sanitizedQuery: userQueryType) {

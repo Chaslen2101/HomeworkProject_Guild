@@ -16,7 +16,7 @@ app.use(express.json())
 app.get("/", (req: Request, res: Response) => {
     res
         .status(httpStatuses.OK_200)
-        .send("Current version: 06_01")
+        .send("Current version: 06_02")
 })
 app.use("/testing/all-data", deleteAllRouter)
 app.use("/blogs", blogRouter)
