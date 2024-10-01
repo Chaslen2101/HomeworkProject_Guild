@@ -92,6 +92,10 @@ export type commentType = {
     postId: string
 }
 
+export type commentContentType = {
+    content: string
+}
+
 export type commentViewType = {
     id: string
     content: string

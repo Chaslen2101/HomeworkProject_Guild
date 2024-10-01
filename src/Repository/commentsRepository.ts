@@ -1,9 +1,9 @@
-import {commentType,userViewType} from "../Types/Types";
+import {commentContentType, commentType, userViewType} from "../Types/Types";
 import {commentCollection} from "../db/MongoDB";
 import {ObjectId} from "mongodb";
 
 export const commentsRepository = {
-    async create (comment:{content:string}, userInfo: userViewType, postId: string) {
+    async create (comment:commentContentType, userInfo: userViewType, postId: string) {
         const newComment: commentType = {
             id: new ObjectId().toString(),
             content: comment.content,
@@ -18,8 +18,8 @@ export const commentsRepository = {
         return newComment.id
     },
 
-    async update(content: string, id: string) {
-        return await commentCollection.updateOne({id: id}, {$set: {content: content}})
+    async update(comment:commentContentType, id: string) {
+        return await commentCollection.updateOne({id: id}, {$set: {content: comment.content}})
     },
 
     async delete(id: string){
