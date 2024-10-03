@@ -4,7 +4,6 @@ import {httpStatuses} from "../settings";
 import {usersQueryRep} from "../Repository/queryRep/usersQueryRep";
 
 
-
 export const loginController = async (req: Request, res: Response) => {
 
     const neededUser = await usersQueryRep.findUserByLoginOrEmail(req.body.loginOrEmail)
@@ -35,4 +34,43 @@ export const getMyInfoController = async (req: Request, res: Response) => {
             login: userInfo!.login,
             userId: userInfo!.id
         })
+}
+
+export const registrationController = async (req: Request, res: Response) => {
+    const isEmailSent = await authService.registration(req.body)
+    if(isEmailSent) {
+        res
+            .status(httpStatuses.NO_CONTENT_204)
+            .json({})
+    }else {
+        res
+            .status(httpStatuses.NOT_FOUND_404)
+            .json({})
+    }
+}
+
+export const confirmEmailController = async (req: Request, res: Response) => {
+    const result = await authService.confirmEmail(req.body.code)
+    if (result) {
+        res
+            .status(httpStatuses.NO_CONTENT_204)
+            .json({})
+    }else {
+        res
+            .status(httpStatuses.BAD_REQUEST_400)
+            .json({})
+    }
+}
+
+export const resendConfirmCodeController = async (req: Request, res: Response) => {
+    const isEmailSent = await authService.resendConfirmCode(req.body.email)
+    if (isEmailSent) {
+        res
+            .status(httpStatuses.NO_CONTENT_204)
+            .json({})
+    }else {
+        res
+            .status(httpStatuses.NOT_FOUND_404)
+            .json({})
+    }
 }

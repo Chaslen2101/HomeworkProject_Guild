@@ -67,7 +67,12 @@ export type existUserType = {
     login: string,
     email:string,
     password: string,
-    createdAt: string
+    createdAt: string,
+    emailConfirmationInfo: {
+        confirmationCode: string | null,
+        expirationDate: Date,
+        isConfirmed: boolean
+    },
 }
 
 export type userQueryType = {

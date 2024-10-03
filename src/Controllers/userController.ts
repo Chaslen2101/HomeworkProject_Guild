@@ -7,22 +7,12 @@ import {userService} from "../Services/userServices";
 
 
 export const createUserController = async (req: Request<{},{},inputUserType>, res: Response) => {
-    try {
+
         const newUserId = await userService.createUser(req.body)
         const newUser = await usersQueryRep.findUserById(newUserId)
         res
             .status(httpStatuses.CREATED_201)
-            .json({
-                id: newUser!.id,
-                login: newUser!.login,
-                email: newUser!.email,
-                createdAt: newUser!.createdAt
-            })
-    }catch (error) {
-        res
-            .status(httpStatuses.BAD_REQUEST_400)
-            .json({"errorsMessages":[{message: `${error} should be uniq`,field: `${error}`}]})
-    }
+            .json({newUser})
 }
 
 export const getUsersController = async (req: Request, res: Response) => {

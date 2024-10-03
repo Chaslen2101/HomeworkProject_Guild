@@ -36,5 +36,9 @@ export const usersQueryRep = {
             totalCount: totalCount,
             items: users
         }
+    },
+
+    async findUserByConfrimCode (code: string) {
+        return userCollection.findOne({"emailConfirmationInfo.confirmationCode": code},{projection:{_id:0}})
     }
 }
