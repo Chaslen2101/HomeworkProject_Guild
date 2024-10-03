@@ -50,15 +50,22 @@ export const registrationController = async (req: Request, res: Response) => {
 }
 
 export const confirmEmailController = async (req: Request, res: Response) => {
-    const result = await authService.confirmEmail(req.body.code)
-    if (result) {
+    try {
+        await authService.confirmEmail(req.body.code)
         res
             .status(httpStatuses.NO_CONTENT_204)
             .json({})
-    }else {
+    }catch (e) {
         res
             .status(httpStatuses.BAD_REQUEST_400)
-            .json({})
+            .json({
+                errorsMessages:[
+                {
+                    message: (e as Error).message,
+                    field:"code"
+                }
+            ]
+        })
     }
 }
 

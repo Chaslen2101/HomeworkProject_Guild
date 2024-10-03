@@ -22,14 +22,21 @@ export const authService = {
         const confirmationCode = randomUUID()
         await usersRepository.createUser(userData, confirmationCode)
         return await emailManager.sendConfirmCode(userData.email, confirmationCode)
+
     },
 
     async confirmEmail(confirmCode: string) {
 
         const user = await usersQueryRep.findUserByConfrimCode(confirmCode)
-        if (!user) return false
-        if(compareDesc(new Date(),user.emailConfirmationInfo.expirationDate) === -1) return false
-        if(user.emailConfirmationInfo.isConfirmed === true) return false
+        if (!user) {
+            throw new Error ("Go register before trying to use confirmation code")
+        }
+        if(compareDesc(new Date(),user.emailConfirmationInfo.expirationDate) === -1) {
+            throw new Error ("Your confirmation code expired")
+        }
+        if(user.emailConfirmationInfo.isConfirmed === true) {
+            throw new Error ("Your email already confirmed")
+        }
         return await usersRepository.confirmEmail(user.id)
     },
 
