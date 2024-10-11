@@ -1,4 +1,4 @@
-import {existUserType, userInfoForTokenType} from "../Types/Types";
+import {userInfoForTokenType} from "../Types/Types";
 import jwt from "jsonwebtoken";
 import {SETTINGS} from "../settings";
 
@@ -30,3 +30,5 @@ export const jwtService = {
         }
     },
 }
+
+
