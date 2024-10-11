@@ -54,7 +54,7 @@ export const authService = {
 
     async refreshToken (refreshToken: any) {
 
-        const isTokenValid = refreshToken ? await jwtService.verifyRefreshToken(refreshToken.split(" ")[1]) : null
+        const isTokenValid = refreshToken ? await jwtService.verifyRefreshToken(refreshToken) : null
         if(!isTokenValid) return false
         const result = await tokenRepository.checkTokenInBlackList(refreshToken)
         if (!result) return false
@@ -67,7 +67,7 @@ export const authService = {
 
     async logout (refreshToken: any) {
 
-        const isTokenValid = refreshToken ? await jwtService.verifyRefreshToken(refreshToken.split(" ")[1]) : null
+        const isTokenValid = refreshToken ? await jwtService.verifyRefreshToken(refreshToken) : null
         if(!isTokenValid) return false
         const result = await tokenRepository.checkTokenInBlackList(refreshToken)
         if (!result) return false
