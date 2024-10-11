@@ -21,7 +21,8 @@ export const loginController = async (req: Request, res: Response) => {
     } else {
         res
             .status(httpStatuses.OK_200)
-            .json({accessToken: token})
+            .cookie("refreshToken", token.refreshToken, {httpOnly: true, secure: true})
+            .json({accessToken: token.accessToken})
     }
 }
 
@@ -38,11 +39,11 @@ export const getMyInfoController = async (req: Request, res: Response) => {
 
 export const registrationController = async (req: Request, res: Response) => {
     const isEmailSent = await authService.registration(req.body)
-    if(isEmailSent) {
+    if (isEmailSent) {
         res
             .status(httpStatuses.NO_CONTENT_204)
             .json({})
-    }else {
+    } else {
         res
             .status(httpStatuses.NOT_FOUND_404)
             .json({})
@@ -55,17 +56,17 @@ export const confirmEmailController = async (req: Request, res: Response) => {
         res
             .status(httpStatuses.NO_CONTENT_204)
             .json({})
-    }catch (e) {
+    } catch (e) {
         res
             .status(httpStatuses.BAD_REQUEST_400)
             .json({
-                errorsMessages:[
-                {
-                    message: (e as Error).message,
-                    field:"code"
-                }
-            ]
-        })
+                errorsMessages: [
+                    {
+                        message: (e as Error).message,
+                        field: "code"
+                    }
+                ]
+            })
     }
 }
 
@@ -75,9 +76,37 @@ export const resendConfirmCodeController = async (req: Request, res: Response) =
         res
             .status(httpStatuses.NO_CONTENT_204)
             .json({})
-    }else {
+    } else {
         res
             .status(httpStatuses.NOT_FOUND_404)
+            .json({})
+    }
+}
+
+export const refreshTokenController = async (req: Request, res: Response) => {
+
+    const result = await authService.refreshToken(req.cookies.refreshToken)
+    if(result) {
+        res
+            .status(httpStatuses.OK_200)
+            .cookie("refreshToken", result.refreshToken,{httpOnly: true, secure: true})
+            .json({accessToken: result.accessToken})
+    }else {
+        res
+            .status(httpStatuses.UNAUTHORIZED_401)
+            .json({})
+    }
+}
+
+export const logoutController = async (req: Request, res: Response) => {
+    const result = await authService.logout(req.cookies.refreshToken)
+    if(result) {
+        res
+            .status(httpStatuses.NO_CONTENT_204)
+            .json({})
+    }else {
+        res
+            .status(httpStatuses.UNAUTHORIZED_401)
             .json({})
     }
 }

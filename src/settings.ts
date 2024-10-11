@@ -9,7 +9,8 @@ export const SETTINGS = {
     PATH: {
         VIDEOS: '/videos',
     },
-    SECRET_KEY: process.env.KEY || "eqwqweqwe"
+    SECRET_ACCESS_TOKEN_KEY: process.env.ACCESS_TOKEN_KEY || "eqwqweqwe",
+    SECRET_REFRESH_TOKEN_KEY: process.env.REFRESH_TOKEN_KEY || "asdasdasasd"
 }
 
 export const httpStatuses = {
@@ -27,7 +28,8 @@ export const mongoSettings = {
     blogCollectionName : "blogs",
     postCollectionName : "posts",
     userCollectionName : "users",
-    commentCollectionName: "comment"
+    commentCollectionName: "comment",
+    refreshTokenBlackListName: "refreshTokenBlackList"
 }
 
 export const ADMIN_AUTH = "admin:qwerty"

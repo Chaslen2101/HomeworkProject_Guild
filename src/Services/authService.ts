@@ -6,6 +6,7 @@ import {usersRepository} from "../Repository/usersRepository";
 import {emailManager} from "../Managers/emailManager";
 import {usersQueryRep} from "../Repository/queryRep/usersQueryRep";
 import {compareDesc} from "date-fns";
+import {tokenRepository} from "../Repository/tokenBlackListRepository";
 
 export const authService = {
 
@@ -13,7 +14,10 @@ export const authService = {
 
         const isPasswordCorrect = await hashHelper.comparePassword(neededUser.password, password)
         if (isPasswordCorrect) {
-            return await jwtService.createToken(neededUser)
+            return {
+                accessToken : await jwtService.createAccessToken(neededUser),
+                refreshToken : await jwtService.createRefreshToken(neededUser)
+            }
         } else return false
     },
 
@@ -46,5 +50,29 @@ export const authService = {
         const code = randomUUID()
         await usersRepository.changeConfirmCode(code, user!.id)
         return await emailManager.sendConfirmCode(email, code)
+    },
+
+    async refreshToken (refreshToken: any) {
+
+        const isTokenValid = refreshToken ? await jwtService.verifyRefreshToken(refreshToken.split(" ")[1]) : null
+        if(!isTokenValid) return false
+        const result = await tokenRepository.checkTokenInBlackList(refreshToken)
+        if (!result) return false
+        await tokenRepository.addNewTokenToBlackList(refreshToken)
+        return {
+            accessToken: await jwtService.createAccessToken(isTokenValid),
+            refreshToken: await jwtService.createRefreshToken(isTokenValid)
+        }
+    },
+
+    async logout (refreshToken: any) {
+
+        const isTokenValid = refreshToken ? await jwtService.verifyRefreshToken(refreshToken.split(" ")[1]) : null
+        if(!isTokenValid) return false
+        const result = await tokenRepository.checkTokenInBlackList(refreshToken)
+        if (!result) return false
+        await tokenRepository.addNewTokenToBlackList(refreshToken)
+        return true
+
     }
 }

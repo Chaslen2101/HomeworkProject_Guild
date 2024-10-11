@@ -75,6 +75,11 @@ export type existUserType = {
     },
 }
 
+export type userInfoForTokenType = {
+    id: string,
+    login: string
+}
+
 export type userQueryType = {
     pageNumber: number,
     pageSize: number,

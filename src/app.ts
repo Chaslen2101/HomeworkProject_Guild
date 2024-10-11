@@ -8,15 +8,17 @@ import {postsRouter} from "./Routers/postsRouter";
 import {authRouter} from "./Routers/authRouter";
 import {usersRouter} from "./Routers/usersRouter";
 import {commentsRouter} from "./Routers/commentsRouter";
+import cookieParser from "cookie-parser";
 
 export const app = express()
 app.use(cors())
 app.use(express.json())
+app.use(cookieParser())
 
 app.get("/", (req: Request, res: Response) => {
     res
         .status(httpStatuses.OK_200)
-        .send("Current version: 07-02")
+        .send("Current version: 08_01")
 })
 app.use("/testing/all-data", deleteAllRouter)
 app.use("/blogs", blogRouter)

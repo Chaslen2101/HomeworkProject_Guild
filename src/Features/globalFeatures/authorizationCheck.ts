@@ -43,8 +43,8 @@ export const base64AuthorizationCheck = (req: Request, res: Response, next: Next
     next()
 }
 
-export const tokenAuthCheck = async (req: Request, res: Response, next: NextFunction) => {
-    const isTokenValid = req.headers.authorization ? await jwtService.verifyToken(req.headers.authorization.split(" ")[1]) : null
+export const accessTokenCheck = async (req: Request, res: Response, next: NextFunction) => {
+    const isTokenValid = req.headers.authorization ? await jwtService.verifyAccessToken(req.headers.authorization.split(" ")[1]) : null
     if (!isTokenValid) {
         res
             .status(httpStatuses.UNAUTHORIZED_401)
