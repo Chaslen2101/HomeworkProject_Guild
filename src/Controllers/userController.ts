@@ -12,7 +12,7 @@ export const createUserController = async (req: Request<{},{},inputUserType>, re
         const newUser = await usersQueryRep.findUserById(newUserId)
         res
             .status(httpStatuses.CREATED_201)
-            .json({newUser})
+            .json(newUser)
 }
 
 export const getUsersController = async (req: Request, res: Response) => {
