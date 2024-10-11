@@ -57,7 +57,7 @@ export const authService = {
         const isTokenValid = refreshToken ? await jwtService.verifyRefreshToken(refreshToken) : null
         if(!isTokenValid) return false
         const result = await tokenRepository.checkTokenInBlackList(refreshToken)
-        if (!result) return false
+        if (result) return false
         await tokenRepository.addNewTokenToBlackList(refreshToken)
         return {
             accessToken: await jwtService.createAccessToken(isTokenValid),
@@ -70,7 +70,7 @@ export const authService = {
         const isTokenValid = refreshToken ? await jwtService.verifyRefreshToken(refreshToken) : null
         if(!isTokenValid) return false
         const result = await tokenRepository.checkTokenInBlackList(refreshToken)
-        if (!result) return false
+        if (result) return false
         await tokenRepository.addNewTokenToBlackList(refreshToken)
         return true
 
