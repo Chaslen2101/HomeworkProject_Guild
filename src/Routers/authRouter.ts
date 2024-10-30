@@ -13,7 +13,7 @@ import {RequestInfoCollector} from "../Features/globalFeatures/apiRequestInfo";
 
 export const authRouter = Router()
 
-authRouter.post("/login", RequestInfoCollector,loginValidator(), inputErrorCheckValidator, loginController)
+authRouter.post("/login", RequestInfoCollector, loginValidator(), inputErrorCheckValidator, loginController)
 authRouter.get("/me", accessTokenCheck, getMyInfoController)
 authRouter.post("/registration", RequestInfoCollector, createUserValidator(),inputErrorCheckValidator, registrationController)
 authRouter.post("/registration-confirmation", RequestInfoCollector,confirmEmailController)
