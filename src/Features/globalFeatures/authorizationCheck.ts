@@ -84,7 +84,7 @@ export const refreshTokenCheck = async (req: Request, res: Response, next: NextF
     }
 
     const result1 = await sessionsQueryRep.findSession(isTokenValid.deviceId)
-    if (result1) {
+    if (!result1) {
         res
             .status(httpStatuses.UNAUTHORIZED_401)
             .json({})
