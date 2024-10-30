@@ -18,13 +18,15 @@ export const jwtService = {
         }
     },
 
-    async createRefreshToken(user: userInfoForTokenType) {
-        return jwt.sign({id: user.id, login: user.login, UUID: randomUUID()}, SETTINGS.SECRET_REFRESH_TOKEN_KEY, {expiresIn: "20s"})
+    async createRefreshToken(user: any, someDeviceId?: string) {
+
+        const deviceId = someDeviceId ? someDeviceId : user.deviceId
+        return jwt.sign({deviceId: deviceId, id: user.id, login: user.login, UUID: randomUUID()}, SETTINGS.SECRET_REFRESH_TOKEN_KEY, {expiresIn: "20s"})
     },
 
     async verifyRefreshToken(token: string) {
         try {
-            return jwt.verify(token, SETTINGS.SECRET_REFRESH_TOKEN_KEY) as { id: string, login: string }
+            return jwt.verify(token, SETTINGS.SECRET_REFRESH_TOKEN_KEY) as { id: string, login: string, deviceId: string }
         } catch (e) {
             console.log("token error:" + e)
             return null

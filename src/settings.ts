@@ -20,7 +20,8 @@ export const httpStatuses = {
     BAD_REQUEST_400: 400,
     UNAUTHORIZED_401: 401,
     NOT_FOUND_404: 404,
-    FORBIDDEN_403: 403
+    FORBIDDEN_403: 403,
+    TOO_MANY_REQUEST_429: 429,
 }
 
 export const mongoSettings = {
@@ -29,7 +30,9 @@ export const mongoSettings = {
     postCollectionName : "posts",
     userCollectionName : "users",
     commentCollectionName: "comment",
-    refreshTokenBlackListName: "refreshTokenBlackList"
+    refreshTokenBlackListName: "refreshTokenBlackList",
+    apiRequestInfoCollectionName: "apiRequestInfo",
+    sessionsCollectionName: "sessions",
 }
 
 export const ADMIN_AUTH = "admin:qwerty"

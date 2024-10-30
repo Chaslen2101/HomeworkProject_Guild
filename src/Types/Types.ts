@@ -119,3 +119,9 @@ export type commentQueryType = {
     sortBy: string,
     sortDirection: SortDirection
 }
+
+export type refreshTokenInfoType = {
+    id: string,
+    login: string,
+    deviceId: string
+}

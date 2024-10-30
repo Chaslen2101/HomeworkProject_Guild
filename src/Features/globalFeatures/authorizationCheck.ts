@@ -2,6 +2,7 @@ import {NextFunction, Request, Response} from "express";
 import {ADMIN_AUTH, httpStatuses} from "../../settings";
 import {jwtService} from "../../Services/jwtService";
 import {usersQueryRep} from "../../Repository/queryRep/usersQueryRep";
+import {tokenRepository} from "../../Repository/tokenBlackListRepository";
 
 
 export const fromBase64ToUTF8 = (code: string) => {
@@ -61,4 +62,27 @@ export const accessTokenCheck = async (req: Request, res: Response, next: NextFu
         req.user = neededUser
         next()
     }
+}
+
+export const refreshTokenCheck = async (req: Request, res: Response, next: NextFunction) => {
+
+    const isTokenValid = req.cookies.refreshToken ? await jwtService.verifyRefreshToken(req.cookies.refreshToken) : null
+    if(!isTokenValid) {
+        res
+            .status(httpStatuses.UNAUTHORIZED_401)
+            .json({})
+        return
+    }
+
+    const result = await tokenRepository.checkTokenInBlackList(req.cookies.refreshToken)
+    if (result) {
+        res
+            .status(httpStatuses.UNAUTHORIZED_401)
+            .json({})
+        return
+    }
+
+    req.refreshTokenInfo = isTokenValid
+
+    next()
 }

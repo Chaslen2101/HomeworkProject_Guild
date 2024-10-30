@@ -9,6 +9,7 @@ import {authRouter} from "./Routers/authRouter";
 import {usersRouter} from "./Routers/usersRouter";
 import {commentsRouter} from "./Routers/commentsRouter";
 import cookieParser from "cookie-parser";
+import {securityDeviceRouter} from "./Routers/securityDeviceRouter";
 
 export const app = express()
 app.use(cors())
@@ -26,4 +27,5 @@ app.use("/posts", postsRouter)
 app.use("/auth", authRouter)
 app.use("/users", usersRouter)
 app.use("/comments", commentsRouter)
+app.use("/security/devices", securityDeviceRouter)
 

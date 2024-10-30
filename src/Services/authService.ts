@@ -1,23 +1,27 @@
 import {jwtService} from "./jwtService";
 import {hashHelper} from "../Features/globalFeatures/helper";
-import {inputUserType} from "../Types/Types";
+import {inputUserType, refreshTokenInfoType} from "../Types/Types";
 import {randomUUID} from "node:crypto";
 import {usersRepository} from "../Repository/usersRepository";
 import {emailManager} from "../Managers/emailManager";
 import {usersQueryRep} from "../Repository/queryRep/usersQueryRep";
 import {compareDesc} from "date-fns";
 import {tokenRepository} from "../Repository/tokenBlackListRepository";
+import {sessionsRepository} from "../Repository/sessionsRepository";
 
 export const authService = {
 
-    async login(password: string, neededUser: any) {
+    async login(password: string, neededUser: any, ip: string | undefined, deviceName: string | undefined) {
 
         const isPasswordCorrect = await hashHelper.comparePassword(neededUser.password, password)
         if (isPasswordCorrect) {
+            const deviceId = randomUUID()
+            await sessionsRepository.addNewDeviceSession(deviceId, neededUser.id, ip, deviceName)
             return {
                 accessToken : await jwtService.createAccessToken(neededUser),
-                refreshToken : await jwtService.createRefreshToken(neededUser)
+                refreshToken : await jwtService.createRefreshToken(neededUser, deviceId)
             }
+
         } else return false
     },
 
@@ -52,26 +56,21 @@ export const authService = {
         return await emailManager.sendConfirmCode(email, code)
     },
 
-    async refreshToken (refreshToken: any) {
+    async refreshToken (refreshToken: string, refreshTokenInfo: refreshTokenInfoType) {
 
-        const isTokenValid = refreshToken ? await jwtService.verifyRefreshToken(refreshToken) : null
-        if(!isTokenValid) return false
-        const result = await tokenRepository.checkTokenInBlackList(refreshToken)
-        if (result) return false
         await tokenRepository.addNewTokenToBlackList(refreshToken)
+
+        await sessionsRepository.updateDeviceSession(refreshTokenInfo.deviceId, refreshTokenInfo.id)
         return {
-            accessToken: await jwtService.createAccessToken(isTokenValid),
-            refreshToken: await jwtService.createRefreshToken(isTokenValid)
+            accessToken: await jwtService.createAccessToken(refreshTokenInfo),
+            refreshToken: await jwtService.createRefreshToken(refreshTokenInfo)
         }
     },
 
-    async logout (refreshToken: any) {
+    async logout (refreshToken: any, refreshTokenInfo: refreshTokenInfoType) {
 
-        const isTokenValid = refreshToken ? await jwtService.verifyRefreshToken(refreshToken) : null
-        if(!isTokenValid) return false
-        const result = await tokenRepository.checkTokenInBlackList(refreshToken)
-        if (result) return false
         await tokenRepository.addNewTokenToBlackList(refreshToken)
+        await sessionsRepository.deleteOneDeviceSession(refreshTokenInfo.id, refreshTokenInfo.deviceId)
         return true
 
     }

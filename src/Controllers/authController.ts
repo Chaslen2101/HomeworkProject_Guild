@@ -13,7 +13,7 @@ export const loginController = async (req: Request, res: Response) => {
             .json({})
         return
     }
-    const token = await authService.login(req.body.password, neededUser)
+    const token = await authService.login(req.body.password, neededUser, req.ip, req.headers["user-agent"])
     if (!token) {
         res
             .status(httpStatuses.UNAUTHORIZED_401)
@@ -85,7 +85,7 @@ export const resendConfirmCodeController = async (req: Request, res: Response) =
 
 export const refreshTokenController = async (req: Request, res: Response) => {
 
-    const result = await authService.refreshToken(req.cookies.refreshToken)
+    const result = await authService.refreshToken(req.cookies.refreshToken, req.refreshTokenInfo)
     if(result) {
         res
             .status(httpStatuses.OK_200)
@@ -99,7 +99,7 @@ export const refreshTokenController = async (req: Request, res: Response) => {
 }
 
 export const logoutController = async (req: Request, res: Response) => {
-    const result = await authService.logout(req.cookies.refreshToken)
+    const result = await authService.logout(req.cookies.refreshToken, req.refreshTokenInfo)
     if(result) {
         res
             .status(httpStatuses.NO_CONTENT_204)
