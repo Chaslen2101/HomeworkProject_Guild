@@ -11,7 +11,7 @@ export const sessionsQueryRep = {
                 deviceId: session.deviceId,
                 ip: session.ip,
                 lastActiveDate: session.lastActiveDate,
-                title: session.deviceName
+                title: session.title
             }
         })
     },
