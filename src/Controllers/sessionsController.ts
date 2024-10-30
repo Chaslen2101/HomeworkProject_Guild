@@ -32,11 +32,16 @@ export const deleteSessionController = async (req: Request, res: Response) => {
             .status(httpStatuses.NOT_FOUND_404)
             .json({})
 
+        return
+
     }else if (session.userId !== req.refreshTokenInfo.id) {
 
         res
             .status(httpStatuses.FORBIDDEN_403)
             .json({})
+
+        return
+
     }else {
 
         await sessionService.deleteOneSession(session.userId, req.params.deviceId)
@@ -44,6 +49,9 @@ export const deleteSessionController = async (req: Request, res: Response) => {
         res
             .status(httpStatuses.NO_CONTENT_204)
             .json({})
+
+        return
+
     }
 
 }
