@@ -9,7 +9,7 @@ export const getActiveSessionsController = async (req: Request, res: Response) =
 
     res
         .status(httpStatuses.OK_200)
-        .json({result})
+        .json(result)
 
 }
 
@@ -28,10 +28,10 @@ export const deleteSessionController = async (req: Request, res: Response) => {
     const session = await sessionsQueryRep.findSession(req.params.deviceId)
 
     if(!session) {
-
         res
             .status(httpStatuses.NOT_FOUND_404)
             .json({})
+
     }else if (session.userId !== req.refreshTokenInfo.id) {
 
         res

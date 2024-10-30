@@ -8,10 +8,10 @@ export const sessionsQueryRep = {
 
         return allSessions.map(session => {
             return {
+                deviceId: session.deviceId,
                 ip: session.ip,
-                title: session.deviceName,
                 lastActiveDate: session.lastActiveDate,
-                deviceId: session.deviceId
+                title: session.deviceName
             }
         })
     },
