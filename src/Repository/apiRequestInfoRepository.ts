@@ -8,7 +8,10 @@ export const apiRequestInfoRepository = {
     },
 
     async findRequestInfo (ip: string | undefined, URL: string): Promise<any> {
-        return await apiRequestInfoCollection.find({IP: ip, URL: URL}).toArray()
+        const requests = await apiRequestInfoCollection.find({IP: ip, URL: URL}).toArray()
+        return requests.map(array => {
+            return array.date
+        })
     },
 
     async deleteRequestInfo (ip: string | undefined, URL: string, date: Date): Promise<any> {
