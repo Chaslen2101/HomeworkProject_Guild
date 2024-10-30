@@ -14,7 +14,7 @@ export const sessionsRepository = {
     },
 
     async updateDeviceSession(deviceId: string, userId: string): Promise<void> {
-        await sessionsCollection.updateOne( {$and: [{deviceId: deviceId},{userId: userId}]}, {lastActiveDate: new Date().toISOString()})
+        await sessionsCollection.updateOne( {$and: [{deviceId: deviceId},{userId: userId}]}, {$set: {lastActiveDate: new Date().toISOString()}})
         return
     },
 
