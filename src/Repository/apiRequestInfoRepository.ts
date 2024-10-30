@@ -11,7 +11,7 @@ export const apiRequestInfoRepository = {
         return await apiRequestInfoCollection.find({IP: ip, URL: URL}).toArray()
     },
 
-    async deleteRequestInfo (ip: string | undefined, URL: string): Promise<any> {
-        await apiRequestInfoCollection.deleteMany({IP: ip, URL: URL})
+    async deleteRequestInfo (ip: string | undefined, URL: string, date: Date): Promise<any> {
+        await apiRequestInfoCollection.deleteMany({IP: ip, URL: URL, date: {$not:{$eq: date}}})
     }
 }
