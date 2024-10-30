@@ -18,7 +18,7 @@ export const RequestInfoCollector = async (req: Request, res: Response, next: Ne
 
         const earliestRequest = min(numberOfRequests)
         const latestRequest = max(numberOfRequests)
-        const difference = differenceInMilliseconds(earliestRequest, latestRequest)
+        const difference = differenceInMilliseconds(latestRequest, earliestRequest)
 
         console.log("earliestRequest: ", earliestRequest)
         console.log("latestRequest: ", latestRequest)
