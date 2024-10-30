@@ -3,6 +3,7 @@ import {ADMIN_AUTH, httpStatuses} from "../../settings";
 import {jwtService} from "../../Services/jwtService";
 import {usersQueryRep} from "../../Repository/queryRep/usersQueryRep";
 import {tokenRepository} from "../../Repository/tokenBlackListRepository";
+import {sessionsQueryRep} from "../../Repository/queryRep/sessionsQueryRep";
 
 
 export const fromBase64ToUTF8 = (code: string) => {
@@ -76,6 +77,14 @@ export const refreshTokenCheck = async (req: Request, res: Response, next: NextF
 
     const result = await tokenRepository.checkTokenInBlackList(req.cookies.refreshToken)
     if (result) {
+        res
+            .status(httpStatuses.UNAUTHORIZED_401)
+            .json({})
+        return
+    }
+
+    const result1 = await sessionsQueryRep.findSession(isTokenValid.deviceId)
+    if (result1) {
         res
             .status(httpStatuses.UNAUTHORIZED_401)
             .json({})
