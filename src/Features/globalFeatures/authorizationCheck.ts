@@ -10,6 +10,7 @@ export const fromBase64ToUTF8 = (code: string) => {
     const buff = Buffer.from(code, 'base64')
     return buff.toString('utf8')
 }
+
 export const fromUTF8ToBase64 = (code: string) => {
     const buff2 = Buffer.from(code, 'utf8')
     return buff2.toString('base64')
@@ -46,14 +47,18 @@ export const base64AuthorizationCheck = (req: Request, res: Response, next: Next
 }
 
 export const accessTokenCheck = async (req: Request, res: Response, next: NextFunction) => {
+
     const isTokenValid = req.headers.authorization ? await jwtService.verifyAccessToken(req.headers.authorization.split(" ")[1]) : null
+
     if (!isTokenValid) {
         res
             .status(httpStatuses.UNAUTHORIZED_401)
             .json({})
         return
     }
+
     const neededUser = await usersQueryRep.findUserById(isTokenValid.id)
+
     if (!neededUser) {
         res
             .status(httpStatuses.UNAUTHORIZED_401)

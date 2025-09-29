@@ -1,6 +1,6 @@
 import {blogsInputType, blogsViewType} from "../Types/Types";
 import {blogCollection} from "../db/MongoDB";
-import {ObjectId} from "mongodb";
+import {DeleteResult, ObjectId, UpdateResult} from "mongodb";
 
 
 export const blog = {
@@ -18,13 +18,13 @@ export const blog = {
         return createdBlog.id
     },
 
-    async delete(id: string) {
-        const result = await blogCollection.deleteOne({id: id})
+    async delete(id: string): Promise<boolean> {
+        const result: DeleteResult = await blogCollection.deleteOne({id: id})
         return result.deletedCount !== 0
     },
 
-    async update(id: string, newInfo: blogsInputType) {
-        const result = await blogCollection.updateOne({id: id}, {
+    async update(id: string, newInfo: blogsInputType): Promise<boolean> {
+        const result: UpdateResult = await blogCollection.updateOne({id: id}, {
             $set: {
                 name: newInfo.name,
                 description: newInfo.description,

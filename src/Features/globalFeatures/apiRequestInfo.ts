@@ -25,7 +25,7 @@ export const RequestInfoCollector = async (req: Request, res: Response, next: Ne
         console.log("difference: ", difference)
         console.log("newPatch")
 
-        if (difference >= 13000) {
+        if (difference >= 10000) {
             await apiRequestInfoRepository.deleteRequestInfo(req.ip, req.originalUrl, date)
             next()
         }else {
