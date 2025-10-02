@@ -16,7 +16,7 @@ export const inputPostsValidation = () => {
         body("blogId").trim().exists().withMessage("blogId is required")
             .isString().withMessage("blogId should be string")
             .custom(async inputBlogId => {
-                const neededBlog = await blogsQueryRep.findByID(inputBlogId)
+                const neededBlog = await blogsQueryRep.findBlogByID(inputBlogId)
                 if (!neededBlog)
                     throw new Error("there are no existing blogs with this ID")
             })

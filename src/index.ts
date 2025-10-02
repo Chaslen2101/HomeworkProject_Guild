@@ -5,7 +5,7 @@ import {runDB} from "./db/MongoDB";
 const startApp = async () => {
 
     // await runDB()
-    runDB().catch(console.dir);
+    await runDB();
     app.listen(SETTINGS.PORT, () => {
         console.log('...server started in port ' + SETTINGS.PORT)
     })

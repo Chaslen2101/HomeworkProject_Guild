@@ -1,22 +1,17 @@
 import {Router} from "express";
-import {
-    confirmEmailController,
-    getMyInfoController,
-    loginController, logoutController, refreshTokenController,
-    registrationController, resendConfirmCodeController
-} from "../Controllers/authController";
+import {authController} from "../Controllers/authController";
 import {loginValidator} from "../Features/validators/loginValidator";
 import {inputErrorCheckValidator} from "../Features/globalFeatures/inputCheckErrorValidator";
 import {accessTokenCheck, refreshTokenCheck} from "../Features/globalFeatures/authorizationCheck";
-import {createUserValidator, emailValidation} from "../Features/validators/userValidator";
+import {usersValidator} from "../Features/validators/usersValidator";
 import {RequestInfoCollector} from "../Features/globalFeatures/apiRequestInfo";
 
 export const authRouter = Router()
 
-authRouter.post("/login", RequestInfoCollector, loginValidator(), inputErrorCheckValidator, loginController)
-authRouter.get("/me", accessTokenCheck, getMyInfoController)
-authRouter.post("/registration", RequestInfoCollector, createUserValidator(),inputErrorCheckValidator, registrationController)
-authRouter.post("/registration-confirmation", RequestInfoCollector,confirmEmailController)
-authRouter.post("/registration-email-resending", RequestInfoCollector, emailValidation(), inputErrorCheckValidator,resendConfirmCodeController)
-authRouter.post("/refresh-token", refreshTokenCheck, refreshTokenController)
-authRouter.post("/logout", refreshTokenCheck, logoutController)
+authRouter.post("/login", RequestInfoCollector, loginValidator(), inputErrorCheckValidator, authController.login)
+authRouter.get("/me", accessTokenCheck, authController.getMyInfo)
+authRouter.post("/registration", RequestInfoCollector, usersValidator.validationOfCreateUser(),inputErrorCheckValidator, authController.registration)
+authRouter.post("/registration-confirmation", RequestInfoCollector,authController.confirmEmail)
+authRouter.post("/registration-email-resending", RequestInfoCollector, usersValidator.emailValidation(), inputErrorCheckValidator,authController.resendConfirmCode)
+authRouter.post("/refresh-token", refreshTokenCheck, authController.refreshToken)
+authRouter.post("/logout", refreshTokenCheck, authController.logout)

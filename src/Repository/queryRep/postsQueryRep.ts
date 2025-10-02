@@ -2,8 +2,10 @@ import {inputQueryType} from "../../Types/Types";
 import {queryHelper} from "../../Features/globalFeatures/helper";
 import {postCollection} from "../../db/MongoDB";
 
-export const postsQueryRep = {
-    async findMany (query:inputQueryType, id?: string) {
+
+class PostsQueryRep {
+
+    async findManyPosts (query:inputQueryType, id?: string) {
         const sanitizedQuery = queryHelper.blogsPostsQuery(query)
         const filter = query.blogId ? {blogId: query.blogId} : id ? {blogId: id} : {}
         const result = await postCollection.find(filter, {projection: {_id: 0}})
@@ -19,9 +21,11 @@ export const postsQueryRep = {
             totalCount: totalCount,
             items: result
         }
-    },
+    }
 
     async findPostById(id: string) {
         return await postCollection.findOne({id: id}, {projection: {_id: 0}})
-    },
+    }
 }
+
+export const postsQueryRep = new PostsQueryRep();

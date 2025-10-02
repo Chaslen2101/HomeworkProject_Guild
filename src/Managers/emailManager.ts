@@ -1,6 +1,7 @@
 import {nodemailerService} from "../Adapters/nodemailerService";
 
-export const emailManager = {
+
+class EmailManager {
 
     async sendConfirmCode (emailAddress: string, confirmCode: string) {
         try {
@@ -12,3 +13,5 @@ export const emailManager = {
         }
     }
 }
+
+export const emailManager = new EmailManager()

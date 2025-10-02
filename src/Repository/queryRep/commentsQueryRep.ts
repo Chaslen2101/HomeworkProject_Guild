@@ -2,12 +2,14 @@ import {commentCollection} from "../../db/MongoDB";
 import {commentQueryType,commentViewType} from "../../Types/Types";
 import {mapToView} from "../../Features/globalFeatures/helper";
 
-export const commentsQueryRep = {
+
+class CommentsQueryRep {
+
     async findCommentById (id: string) {
         return await commentCollection.findOne({id: id}, {projection: {_id: 0}})
-    },
+    }
 
-    async findCommentsByPostId (postId: string, query: commentQueryType) {
+    async findManyCommentsByPostId (postId: string, query: commentQueryType) {
         const items = await commentCollection.find({postId: postId}, {projection:{_id: 0}})
             .sort(query.sortBy, query.sortDirection)
             .limit(query.pageSize)
@@ -24,3 +26,5 @@ export const commentsQueryRep = {
         }
     }
 }
+
+export const commentsQueryRep = new CommentsQueryRep();

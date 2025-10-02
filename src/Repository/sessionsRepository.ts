@@ -1,6 +1,7 @@
 import {sessionsCollection} from "../db/MongoDB";
 
-export const sessionsRepository = {
+
+class SessionsRepository {
 
     async addNewDeviceSession(deviceId: string, userId: string, ip: string | undefined, deviceName: string | undefined): Promise<void> {
         await sessionsCollection.insertOne({
@@ -11,18 +12,18 @@ export const sessionsRepository = {
             userId: userId
         });
         return
-    },
+    }
 
     async updateDeviceSession(deviceId: string, userId: string): Promise<void> {
         await sessionsCollection.updateOne( {$and: [{deviceId: deviceId},{userId: userId}]}, {$set: {lastActiveDate: new Date().toISOString()}})
         return
-    },
+    }
 
     async deleteOneDeviceSession(userId: string, deviceId: string,): Promise<void> {
 
         await sessionsCollection.deleteOne({$and: [{deviceId: deviceId},{userId: userId}]})
         return
-    },
+    }
 
     async deleteAllDeviceSessions(userId: string, deviceId: string): Promise<void> {
 
@@ -30,3 +31,6 @@ export const sessionsRepository = {
         return
     }
 }
+
+export const sessionsRepository = new SessionsRepository()
+

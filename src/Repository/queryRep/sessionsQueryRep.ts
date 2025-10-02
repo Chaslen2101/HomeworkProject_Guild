@@ -1,6 +1,7 @@
 import {sessionsCollection} from "../../db/MongoDB";
 
-export const sessionsQueryRep = {
+
+class SessionsQueryRep {
 
     async getAllSessions(userId: string): Promise<any> {
 
@@ -14,10 +15,12 @@ export const sessionsQueryRep = {
                 title: session.title
             }
         })
-    },
+    }
 
     async findSession(deviceId: string): Promise<any> {
 
         return await sessionsCollection.findOne({deviceId: deviceId}, {projection:{_id: 0}})
     }
 }
+
+export const sessionsQueryRep = new SessionsQueryRep()

@@ -4,13 +4,15 @@ export type inputQueryType = {
     [key:string]: string | undefined
 }
 
-export type blogsViewType = {
-    id: string
-    name: string
-    description: string
-    websiteUrl: string
-    createdAt: string
-    isMembership: boolean
+export class blogsViewType  {
+    constructor(
+        public id: string,
+        public name: string,
+        public description: string,
+        public websiteUrl: string,
+        public createdAt: string,
+        public isMembership: boolean
+    ) {}
 }
 
 export type blogsInputType = {
@@ -27,14 +29,16 @@ export type blogsPostsQueryType = {
     searchNameTerm: string | undefined,
 }
 
-export type postsViewType = {
-    id: string
-    title: string
-    shortDescription: string
-    content: string
-    blogId: string
-    blogName: string
-    createdAt: string
+export class postsViewType {
+    constructor(
+        public id: string,
+        public title: string,
+        public shortDescription: string,
+        public content: string,
+        public blogId: string,
+        public blogName: string,
+        public createdAt: string
+        ) {}
 }
 
 export type postsInputType = {
@@ -49,11 +53,14 @@ export type userLoginInputType = {
     password: string
 }
 
-export type userViewType = {
-    id: string,
-    login: string,
-    email:string,
-    createdAt: string
+export class userViewType {
+    constructor(
+        public id: string,
+        public login: string,
+        public email:string,
+        public createdAt: string
+        ) {}
+
 }
 
 export type inputUserType = {
@@ -94,23 +101,29 @@ export type commentatorInfoType = {
     userLogin: string
 }
 
-export type commentType = {
-    id: string
-    content: string
-    commentatorInfo: commentatorInfoType,
-    createdAt: string
-    postId: string
+export class existCommentType {
+    constructor(
+        public id: string,
+        public content: string,
+        public commentatorInfo: commentatorInfoType,
+        public createdAt: string,
+        public postId: string,
+    ) {}
+
 }
 
 export type commentContentType = {
     content: string
 }
 
-export type commentViewType = {
-    id: string
-    content: string
-    commentatorInfo: commentatorInfoType,
-    createdAt: string
+export class commentViewType {
+    constructor(
+        public id: string,
+        public content: string,
+        public commentatorInfo: commentatorInfoType,
+        public createdAt: string
+        ) {}
+
 }
 
 export type commentQueryType = {

@@ -6,10 +6,11 @@ import {usersRepository} from "../Repository/usersRepository";
 import {emailManager} from "../Managers/emailManager";
 import {usersQueryRep} from "../Repository/queryRep/usersQueryRep";
 import {compareDesc} from "date-fns";
-import {tokenRepository} from "../Repository/tokenBlackListRepository";
+import {tokenBlackListRepository} from "../Repository/tokenBlackListRepository";
 import {sessionsRepository} from "../Repository/sessionsRepository";
 
-export const authService = {
+
+class AuthService {
 
     async login(password: string, neededUser: any, ip: string | undefined, deviceName: string | undefined) {
 
@@ -23,7 +24,7 @@ export const authService = {
             }
 
         } else return false
-    },
+    }
 
     async registration(userData: inputUserType) {
 
@@ -31,11 +32,11 @@ export const authService = {
         await usersRepository.createUser(userData, confirmationCode)
         return await emailManager.sendConfirmCode(userData.email, confirmationCode)
 
-    },
+    }
 
     async confirmEmail(confirmCode: string) {
 
-        const user = await usersQueryRep.findUserByConfrimCode(confirmCode)
+        const user = await usersQueryRep.findUserByConfirmCode(confirmCode)
         if (!user) {
             throw new Error ("Go register before trying to use confirmation code")
         }
@@ -46,7 +47,7 @@ export const authService = {
             throw new Error ("Your email already confirmed")
         }
         return await usersRepository.confirmEmail(user.id)
-    },
+    }
 
     async resendConfirmCode (email: string,) {
 
@@ -54,24 +55,26 @@ export const authService = {
         const code = randomUUID()
         await usersRepository.changeConfirmCode(code, user!.id)
         return await emailManager.sendConfirmCode(email, code)
-    },
+    }
 
     async refreshToken (refreshToken: string, refreshTokenInfo: refreshTokenInfoType) {
 
-        await tokenRepository.addNewTokenToBlackList(refreshToken)
+        await tokenBlackListRepository.addNewTokenToBlackList(refreshToken)
 
         await sessionsRepository.updateDeviceSession(refreshTokenInfo.deviceId, refreshTokenInfo.id)
         return {
             accessToken: await jwtService.createAccessToken(refreshTokenInfo),
             refreshToken: await jwtService.createRefreshToken(refreshTokenInfo)
         }
-    },
+    }
 
     async logout (refreshToken: any, refreshTokenInfo: refreshTokenInfoType) {
 
-        await tokenRepository.addNewTokenToBlackList(refreshToken)
+        await tokenBlackListRepository.addNewTokenToBlackList(refreshToken)
         await sessionsRepository.deleteOneDeviceSession(refreshTokenInfo.id, refreshTokenInfo.deviceId)
         return true
 
     }
 }
+
+export const authService = new AuthService()

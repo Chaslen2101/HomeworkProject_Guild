@@ -2,8 +2,10 @@ import {blogsPostsQueryType,inputQueryType} from "../../Types/Types";
 import {queryHelper} from "../../Features/globalFeatures/helper";
 import {blogCollection} from "../../db/MongoDB";
 
-export const blogsQueryRep = {
-    async findMany(query: inputQueryType) {
+
+class BlogsQueryRep {
+
+    async findManyBlogs(query: inputQueryType) {
 
         const sanitizedQuery: blogsPostsQueryType = queryHelper.blogsPostsQuery(query)
         const filter = sanitizedQuery.searchNameTerm ? {name: {$regex: sanitizedQuery.searchNameTerm, $options: "i"}} : {}
@@ -21,9 +23,11 @@ export const blogsQueryRep = {
             totalCount: totalCount,
             items: items
         }
-    },
+    }
 
-    async findByID(id: string) {
+    async findBlogByID(id: string) {
         return await blogCollection.findOne({id: id}, {projection: {_id: 0}})
-    },
+    }
 }
+
+export const blogsQueryRep = new BlogsQueryRep();

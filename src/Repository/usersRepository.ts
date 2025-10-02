@@ -6,7 +6,7 @@ import {UUID} from "node:crypto";
 import {add} from "date-fns"
 
 
-export const usersRepository = {
+class UsersRepository {
 
     async createUser (newUserData: inputUserType, confirmCode?: UUID) {
         const hashedPassword = await hashHelper.hashNewPassword(newUserData.password)
@@ -24,12 +24,12 @@ export const usersRepository = {
         }
         await userCollection.insertOne(newUser)
         return newUser.id
-    },
+    }
 
     async deleteUser (id: string) {
-       const result = await userCollection.deleteOne({id: id})
-       return result.deletedCount !== 0
-    },
+        const result = await userCollection.deleteOne({id: id})
+        return result.deletedCount !== 0
+    }
 
     async confirmEmail (userId:string) {
         const result = await userCollection.updateOne(
@@ -37,7 +37,7 @@ export const usersRepository = {
             {$set:{"emailConfirmationInfo.isConfirmed": true}}
         )
         return result.modifiedCount === 1
-    },
+    }
 
     async changeConfirmCode (code: string, userId: string) {
         const result = await userCollection.updateOne(
@@ -47,3 +47,5 @@ export const usersRepository = {
         return result.modifiedCount === 1
     }
 }
+
+export const usersRepository = new UsersRepository()

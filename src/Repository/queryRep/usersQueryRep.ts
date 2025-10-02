@@ -1,18 +1,21 @@
 import {userCollection} from "../../db/MongoDB";
-import {userQueryType, userViewType} from "../../Types/Types";
+import {existUserType, userQueryType, userViewType} from "../../Types/Types";
 import {mapToView} from "../../Features/globalFeatures/helper";
+import {WithId} from "mongodb";
+import {exists} from "node:fs";
 
-export const usersQueryRep = {
+
+class UsersQueryRep {
 
     async findUserByLoginOrEmail (loginOrEmail: string) {
         return await userCollection.findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]}, {projection: {_id: 0}});
-    },
+    }
 
     async findUserById (id: string) {
         return mapToView.mapUser(await userCollection.findOne({id: id,},{projection: {_id: 0}}))
-    },
+    }
 
-    async findMany (sanitizedQuery: userQueryType) {
+    async findManyUsersByLoginOrEmail (sanitizedQuery: userQueryType) {
         let filter = {}
         if (sanitizedQuery.searchLoginTerm && sanitizedQuery.searchEmailTerm) {
             filter = {$or:[{email:{$regex: sanitizedQuery.searchEmailTerm, $options: "i"}},{login:{$regex: sanitizedQuery.searchLoginTerm, $options:"i"}}]}
@@ -26,7 +29,7 @@ export const usersQueryRep = {
             .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
             .limit(sanitizedQuery.pageSize)
             .skip((sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize)
-            .toArray()
+            .toArray() as WithId<existUserType>[]
         const totalCount = await userCollection.countDocuments(filter)
         const users: userViewType[] = mapToView.mapUsers(items)
         return {
@@ -36,9 +39,11 @@ export const usersQueryRep = {
             totalCount: totalCount,
             items: users
         }
-    },
+    }
 
-    async findUserByConfrimCode (code: string) {
+    async findUserByConfirmCode (code: string) {
         return userCollection.findOne({"emailConfirmationInfo.confirmationCode": code},{projection:{_id:0}})
     }
 }
+
+export const usersQueryRep = new UsersQueryRep()

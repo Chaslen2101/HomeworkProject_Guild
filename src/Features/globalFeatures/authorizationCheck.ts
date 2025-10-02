@@ -2,7 +2,7 @@ import {NextFunction, Request, Response} from "express";
 import {ADMIN_AUTH, httpStatuses} from "../../settings";
 import {jwtService} from "../../Services/jwtService";
 import {usersQueryRep} from "../../Repository/queryRep/usersQueryRep";
-import {tokenRepository} from "../../Repository/tokenBlackListRepository";
+import {tokenBlackListRepository} from "../../Repository/tokenBlackListRepository";
 import {sessionsQueryRep} from "../../Repository/queryRep/sessionsQueryRep";
 
 
@@ -80,7 +80,7 @@ export const refreshTokenCheck = async (req: Request, res: Response, next: NextF
         return
     }
 
-    const result = await tokenRepository.checkTokenInBlackList(req.cookies.refreshToken)
+    const result = await tokenBlackListRepository.checkTokenInBlackList(req.cookies.refreshToken)
     if (result) {
         res
             .status(httpStatuses.UNAUTHORIZED_401)

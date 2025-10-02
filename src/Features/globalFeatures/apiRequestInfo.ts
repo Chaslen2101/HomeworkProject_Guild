@@ -8,9 +8,9 @@ export const RequestInfoCollector = async (req: Request, res: Response, next: Ne
 
     const date = new Date();
 
-    await apiRequestInfoRepository.addRequestInfo(req.ip, req.originalUrl, date)
+    await apiRequestInfoRepository.addApiRequestInfo(req.ip, req.originalUrl, date)
 
-    const numberOfRequests = await apiRequestInfoRepository.findRequestInfo(req.ip, req.originalUrl)
+    const numberOfRequests = await apiRequestInfoRepository.findApiRequestInfo(req.ip, req.originalUrl)
 
     console.log("numberOfRequests: ", numberOfRequests)
 
@@ -26,7 +26,7 @@ export const RequestInfoCollector = async (req: Request, res: Response, next: Ne
         console.log("newPatch")
 
         if (difference >= 10000) {
-            await apiRequestInfoRepository.deleteRequestInfo(req.ip, req.originalUrl, date)
+            await apiRequestInfoRepository.deleteApiRequestInfo(req.ip, req.originalUrl, date)
             next()
         }else {
             res
