@@ -2,7 +2,7 @@ import {body} from "express-validator";
 
 export const isEmailValidator = () => {
     return [
-        body("email").trim().isEmail().withMessage("Invalid email address")
+        body("email").trim().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage("Invalid email address")
     ]
 }
 
