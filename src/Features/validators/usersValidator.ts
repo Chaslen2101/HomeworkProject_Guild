@@ -1,6 +1,6 @@
 import {body} from "express-validator";
 import {UsersQueryRep} from "../../Repository/queryRep/usersQueryRep";
-import {inject, injectable} from "inversify";
+import {inject} from "inversify";
 
 
 export class UsersValidator {
@@ -23,7 +23,7 @@ export class UsersValidator {
                 .isString().withMessage("password should be string"),
             body("email").trim().isString().withMessage("email should be string")
                 .isEmail().withMessage("use real Email address")
-                .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage("email doesnt match pattern")
+                .matches(/^[\w+-.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage("email doesnt match pattern")
                 .custom(async email => {
                     if (await this.usersQueryRep.findUserByLoginOrEmail(email)) {
                         throw new Error("login or email should be uniq")
@@ -36,7 +36,7 @@ export class UsersValidator {
         return [
             body("email").trim().isEmail().withMessage("Input real Email")
                 .isString().withMessage("email should be string")
-                .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage("Email should match the pattern")
+                .matches(/^[\w+-.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage("Email should match the pattern")
                 .custom(async email => {
                     const user = await this.usersQueryRep.findUserByLoginOrEmail(email)
                     if (!user) throw new Error("user with this email doesnt exists")
