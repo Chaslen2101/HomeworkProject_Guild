@@ -1,9 +1,11 @@
 import {commentCollection} from "../../db/MongoDB";
 import {commentQueryType,commentViewType} from "../../Types/Types";
 import {mapToView} from "../../Features/globalFeatures/helper";
+import {injectable} from "inversify";
 
 
-class CommentsQueryRep {
+@injectable()
+export class CommentsQueryRep {
 
     async findCommentById (id: string) {
         return await commentCollection.findOne({id: id}, {projection: {_id: 0}})
@@ -26,5 +28,3 @@ class CommentsQueryRep {
         }
     }
 }
-
-export const commentsQueryRep = new CommentsQueryRep();

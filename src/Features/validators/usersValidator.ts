@@ -1,7 +1,13 @@
 import {body} from "express-validator";
-import {usersQueryRep} from "../../Repository/queryRep/usersQueryRep";
+import {UsersQueryRep} from "../../Repository/queryRep/usersQueryRep";
+import {inject, injectable} from "inversify";
 
-class UsersValidator {
+
+export class UsersValidator {
+
+    constructor(
+        @inject(UsersQueryRep) protected usersQueryRep: UsersQueryRep
+    ) {}
 
     validationOfCreateUser = () => {
         return [
@@ -9,7 +15,7 @@ class UsersValidator {
                 .isString().withMessage("login should be string")
                 .matches(/^[a-zA-Z0-9_-]*$/).withMessage("login doesnt match pattern")
                 .custom(async login => {
-                    if (await usersQueryRep.findUserByLoginOrEmail(login)) {
+                    if (await this.usersQueryRep.findUserByLoginOrEmail(login)) {
                         throw new Error("login and email should be uniq")
                     }
                 }),
@@ -19,7 +25,7 @@ class UsersValidator {
                 .isEmail().withMessage("use real Email address")
                 .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage("email doesnt match pattern")
                 .custom(async email => {
-                    if (await usersQueryRep.findUserByLoginOrEmail(email)) {
+                    if (await this.usersQueryRep.findUserByLoginOrEmail(email)) {
                         throw new Error("login or email should be uniq")
                     }
                 })
@@ -32,12 +38,10 @@ class UsersValidator {
                 .isString().withMessage("email should be string")
                 .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage("Email should match the pattern")
                 .custom(async email => {
-                    const user = await usersQueryRep.findUserByLoginOrEmail(email)
+                    const user = await this.usersQueryRep.findUserByLoginOrEmail(email)
                     if (!user) throw new Error("user with this email doesnt exists")
                     if (user.emailConfirmationInfo.isConfirmed === true) throw new Error("Email already confirmed")
                 })
         ]
     }
 }
-
-export const usersValidator = new UsersValidator()

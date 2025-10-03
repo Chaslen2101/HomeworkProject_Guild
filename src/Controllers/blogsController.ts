@@ -1,28 +1,36 @@
 import {Request, Response} from "express";
 import {httpStatuses} from "../settings";
-import {blogsQueryRep} from "../Repository/queryRep/blogsQueryRep";
+import {BlogsQueryRep} from "../Repository/queryRep/blogsQueryRep";
 import {inputQueryType} from "../Types/Types";
-import {postsQueryRep} from "../Repository/queryRep/postsQueryRep";
-import {blogsService} from "../Services/blogsServices";
-import {postsService} from "../Services/postsServices";
+import {PostsQueryRep} from "../Repository/queryRep/postsQueryRep";
+import {BlogService} from "../Services/blogsServices";
+import {PostsService} from "../Services/postsServices";
+import {inject} from "inversify";
 
-class BlogsController {
+export class BlogsController {
+
+    constructor(
+        @inject(BlogsQueryRep) protected blogsQueryRep: BlogsQueryRep,
+        @inject(PostsQueryRep) protected postsQueryRep: PostsQueryRep,
+        @inject(BlogService) protected blogsService: BlogService,
+        @inject(PostsService) protected postsService: PostsService
+    ) {}
 
     async returnAllBlogs (req: Request, res: Response){
         res
             .status(httpStatuses.OK_200)
-            .json(await blogsQueryRep.findManyBlogs(req.query as { [key: string]: string | undefined }))
+            .json(await this.blogsQueryRep.findManyBlogs(req.query as { [key: string]: string | undefined }))
     }
 
     async createBlog (req: Request, res: Response){
-        const createdBlogId = await blogsService.createBlog(req.body)
+        const createdBlogId = await this.blogsService.createBlog(req.body)
         res
             .status(httpStatuses.CREATED_201)
-            .json(await blogsQueryRep.findBlogByID(createdBlogId))
+            .json(await this.blogsQueryRep.findBlogByID(createdBlogId))
     }
 
     async findBlogById (req: Request, res: Response) {
-        const neededBlog = await blogsQueryRep.findBlogByID(req.params.id)
+        const neededBlog = await this.blogsQueryRep.findBlogByID(req.params.id)
         if (neededBlog) {
             res
                 .status(httpStatuses.OK_200)
@@ -35,7 +43,7 @@ class BlogsController {
     }
 
     async updateBlogById (req: Request, res: Response) {
-        const isUpdated = await blogsService.updateBlog(req.params.id, req.body)
+        const isUpdated = await this.blogsService.updateBlog(req.params.id, req.body)
         if (isUpdated) {
             res
                 .status(httpStatuses.NO_CONTENT_204)
@@ -48,7 +56,7 @@ class BlogsController {
     }
 
     async deleteBlogByID (req: Request, res: Response) {
-        const isDeleted = await blogsService.deleteBlog(req.params.id)
+        const isDeleted = await this.blogsService.deleteBlog(req.params.id)
         if (isDeleted) {
             res
                 .status(httpStatuses.NO_CONTENT_204)
@@ -61,7 +69,7 @@ class BlogsController {
     }
 
     async findPostsOfBlog (req: Request, res: Response) {
-        const neededBlog = await blogsQueryRep.findBlogByID(req.params.blogId)
+        const neededBlog = await this.blogsQueryRep.findBlogByID(req.params.blogId)
         if (!neededBlog) {
             res
                 .status(httpStatuses.NOT_FOUND_404)
@@ -69,17 +77,17 @@ class BlogsController {
         } else {
             res
                 .status(httpStatuses.OK_200)
-                .json(await postsQueryRep.findManyPosts(req.query as inputQueryType, req.params.blogId))
+                .json(await this.postsQueryRep.findManyPosts(req.query as inputQueryType, req.params.blogId))
         }
     }
 
     async createPostForBlog (req: Request, res: Response) {
-        const neededBlog = await blogsQueryRep.findBlogByID(req.params.blogId)
+        const neededBlog = await this.blogsQueryRep.findBlogByID(req.params.blogId)
         if (neededBlog) {
-            const newPostId = await postsService.createPost(req.body, neededBlog)
+            const newPostId = await this.postsService.createPost(req.body, neededBlog)
             res
                 .status(httpStatuses.CREATED_201)
-                .json(await postsQueryRep.findPostById(newPostId))
+                .json(await this.postsQueryRep.findPostById(newPostId))
         } else {
             res
                 .status(httpStatuses.NOT_FOUND_404)
@@ -87,5 +95,3 @@ class BlogsController {
         }
     }
 }
-
-export const blogsController = new BlogsController()

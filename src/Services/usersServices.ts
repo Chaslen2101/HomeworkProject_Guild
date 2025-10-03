@@ -1,16 +1,21 @@
 import {inputUserType} from "../Types/Types";
-import {usersRepository} from "../Repository/usersRepository";
+import {UsersRepository} from "../Repository/usersRepository";
+import {inject, injectable} from "inversify";
 
 
-class UsersService {
+@injectable()
+export class UsersService {
+
+    constructor(
+        @inject(UsersRepository) protected usersRepository: UsersRepository
+    ) {}
 
     async createUser (newUserData: inputUserType) {
-        return await usersRepository.createUser(newUserData)
+        return await this.usersRepository.createUser(newUserData)
     }
 
     async deleteUser (id: string) {
-        return await usersRepository.deleteUser(id)
+        return await this.usersRepository.deleteUser(id)
     }
 }
 
-export const usersService = new UsersService()

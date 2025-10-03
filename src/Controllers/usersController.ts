@@ -1,17 +1,23 @@
 import {Request, Response} from "express"
 import {inputQueryType, inputUserType, userQueryType} from "../Types/Types";
-import {usersQueryRep} from "../Repository/queryRep/usersQueryRep";
+import {UsersQueryRep} from "../Repository/queryRep/usersQueryRep";
 import {httpStatuses} from "../settings";
 import {queryHelper} from "../Features/globalFeatures/helper";
-import {usersService} from "../Services/usersServices";
+import {UsersService} from "../Services/usersServices";
+import {inject} from "inversify";
 
 
-class UserController {
+export class UsersController {
+
+    constructor(
+        @inject(UsersQueryRep) protected usersQueryRep: UsersQueryRep,
+        @inject(UsersService) protected usersService: UsersService
+    ) {}
 
     async createUser (req: Request<{}, {}, inputUserType>, res: Response)  {
 
-        const newUserId = await usersService.createUser(req.body)
-        const newUser = await usersQueryRep.findUserById(newUserId)
+        const newUserId = await this.usersService.createUser(req.body)
+        const newUser = await this.usersQueryRep.findUserById(newUserId)
         res
             .status(httpStatuses.CREATED_201)
             .json(newUser)
@@ -22,12 +28,12 @@ class UserController {
         const sanitizedQuery: userQueryType = queryHelper.userQuery(req.query as inputQueryType)
         res
             .status(httpStatuses.OK_200)
-            .json(await usersQueryRep.findManyUsersByLoginOrEmail(sanitizedQuery))
+            .json(await this.usersQueryRep.findManyUsersByLoginOrEmail(sanitizedQuery))
     }
 
     async deleteUser (req: Request, res: Response) {
 
-        const isDeleted = await usersService.deleteUser(req.params.id)
+        const isDeleted = await this.usersService.deleteUser(req.params.id)
         if (isDeleted) {
             res
                 .status(httpStatuses.NO_CONTENT_204)
@@ -39,4 +45,3 @@ class UserController {
     }
 }
 
-export const usersController = new UserController()

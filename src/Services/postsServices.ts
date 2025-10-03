@@ -1,20 +1,25 @@
-import {postsRepository} from "../Repository/postsRepository";
+import {PostsRepository} from "../Repository/postsRepository";
 import {postsInputType} from "../Types/Types";
+import {inject, injectable} from "inversify";
 
 
-class PostsService {
+@injectable()
+export class PostsService {
+
+    constructor(
+        @inject(PostsRepository) protected postsRepository: PostsRepository
+    ) {}
 
     async createPost (body: postsInputType, neededBlog: any) {
-        return await postsRepository.create(body, neededBlog)
+        return await this.postsRepository.create(body, neededBlog)
     }
 
     async updatePost(id: string, body: postsInputType) {
-        return await postsRepository.update(id, body)
+        return await this.postsRepository.update(id, body)
     }
 
     async deletePost (id: string) {
-        return await postsRepository.delete(id)
+        return await this.postsRepository.delete(id)
     }
 }
 
-export const postsService = new PostsService();

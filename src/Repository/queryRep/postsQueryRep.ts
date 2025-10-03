@@ -1,9 +1,11 @@
 import {inputQueryType} from "../../Types/Types";
 import {queryHelper} from "../../Features/globalFeatures/helper";
 import {postCollection} from "../../db/MongoDB";
+import {injectable} from "inversify";
 
 
-class PostsQueryRep {
+@injectable()
+export class PostsQueryRep {
 
     async findManyPosts (query:inputQueryType, id?: string) {
         const sanitizedQuery = queryHelper.blogsPostsQuery(query)
@@ -27,5 +29,3 @@ class PostsQueryRep {
         return await postCollection.findOne({id: id}, {projection: {_id: 0}})
     }
 }
-
-export const postsQueryRep = new PostsQueryRep();

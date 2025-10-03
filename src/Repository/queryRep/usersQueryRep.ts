@@ -2,10 +2,11 @@ import {userCollection} from "../../db/MongoDB";
 import {existUserType, userQueryType, userViewType} from "../../Types/Types";
 import {mapToView} from "../../Features/globalFeatures/helper";
 import {WithId} from "mongodb";
-import {exists} from "node:fs";
+import {injectable} from "inversify";
 
 
-class UsersQueryRep {
+@injectable()
+export class UsersQueryRep {
 
     async findUserByLoginOrEmail (loginOrEmail: string) {
         return await userCollection.findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]}, {projection: {_id: 0}});
@@ -46,4 +47,3 @@ class UsersQueryRep {
     }
 }
 
-export const usersQueryRep = new UsersQueryRep()

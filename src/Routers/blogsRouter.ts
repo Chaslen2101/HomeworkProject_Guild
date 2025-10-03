@@ -1,18 +1,16 @@
 import {Router} from "express"
 import {inputErrorCheckValidator} from "../Features/globalFeatures/inputCheckErrorValidator";
-import {blogsController} from "../Controllers/blogsController";
 import {inputBlogsValidation} from "../Features/validators/blogsValidator";
-import {base64AuthorizationCheck} from "../Features/globalFeatures/authorizationCheck";
-import {inputSpecifiedPostValidation} from "../Features/validators/postsValidator";
+import {authorizationCheck, blogsController, postsValidator} from "../composition-root";
 
 
 
 export const blogRouter = Router({})
 
-blogRouter.get('/', blogsController.returnAllBlogs)
-blogRouter.post("/", base64AuthorizationCheck,inputBlogsValidation(), inputErrorCheckValidator,blogsController.createBlog)
-blogRouter.get("/:id",blogsController.findBlogById)
-blogRouter.put("/:id", base64AuthorizationCheck,inputBlogsValidation(), inputErrorCheckValidator, blogsController.updateBlogById)
-blogRouter.delete("/:id",base64AuthorizationCheck,blogsController.deleteBlogByID)
-blogRouter.get("/:blogId/posts", blogsController.findPostsOfBlog)
-blogRouter.post("/:blogId/posts", base64AuthorizationCheck,inputSpecifiedPostValidation(),inputErrorCheckValidator, blogsController.createPostForBlog)
+blogRouter.get('/', blogsController.returnAllBlogs.bind(blogsController))
+blogRouter.post("/", authorizationCheck.base64AuthorizationCheck,inputBlogsValidation(), inputErrorCheckValidator,blogsController.createBlog.bind(blogsController))
+blogRouter.get("/:id",blogsController.findBlogById.bind(blogsController))
+blogRouter.put("/:id", authorizationCheck.base64AuthorizationCheck,inputBlogsValidation(), inputErrorCheckValidator, blogsController.updateBlogById.bind(blogsController))
+blogRouter.delete("/:id",authorizationCheck.base64AuthorizationCheck,blogsController.deleteBlogByID.bind(blogsController))
+blogRouter.get("/:blogId/posts", blogsController.findPostsOfBlog.bind(blogsController))
+blogRouter.post("/:blogId/posts", authorizationCheck.base64AuthorizationCheck,postsValidator.inputSpecifiedPostValidation(),inputErrorCheckValidator, blogsController.createPostForBlog.bind(blogsController))

@@ -4,9 +4,11 @@ import {ObjectId} from "mongodb";
 import {hashHelper} from "../Features/globalFeatures/helper";
 import {UUID} from "node:crypto";
 import {add} from "date-fns"
+import {injectable} from "inversify";
 
 
-class UsersRepository {
+@injectable()
+export class UsersRepository {
 
     async createUser (newUserData: inputUserType, confirmCode?: UUID) {
         const hashedPassword = await hashHelper.hashNewPassword(newUserData.password)
@@ -48,4 +50,3 @@ class UsersRepository {
     }
 }
 
-export const usersRepository = new UsersRepository()

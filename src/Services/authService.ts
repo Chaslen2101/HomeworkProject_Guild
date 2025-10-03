@@ -1,23 +1,33 @@
-import {jwtService} from "./jwtService";
+import {jwtService} from "../Features/globalFeatures/jwtService";
 import {hashHelper} from "../Features/globalFeatures/helper";
 import {inputUserType, refreshTokenInfoType} from "../Types/Types";
 import {randomUUID} from "node:crypto";
-import {usersRepository} from "../Repository/usersRepository";
+import {UsersRepository} from "../Repository/usersRepository";
 import {emailManager} from "../Managers/emailManager";
-import {usersQueryRep} from "../Repository/queryRep/usersQueryRep";
+import {UsersQueryRep} from "../Repository/queryRep/usersQueryRep";
 import {compareDesc} from "date-fns";
-import {tokenBlackListRepository} from "../Repository/tokenBlackListRepository";
-import {sessionsRepository} from "../Repository/sessionsRepository";
+import {TokenBlackListRepository} from "../Repository/tokenBlackListRepository";
+import {SessionsRepository} from "../Repository/sessionsRepository";
+import {inject, injectable} from "inversify";
+import {BlogsRepository} from "../Repository/blogsRepository";
 
 
-class AuthService {
+@injectable()
+export class AuthService {
+
+    constructor(
+        @inject(UsersRepository) protected usersRepository: UsersRepository,
+        @inject(UsersQueryRep) protected usersQueryRep: UsersQueryRep,
+        @inject(SessionsRepository) protected sessionsRepository: SessionsRepository,
+        @inject(TokenBlackListRepository) protected tokenBlackListRepository: TokenBlackListRepository
+    ) {}
 
     async login(password: string, neededUser: any, ip: string | undefined, deviceName: string | undefined) {
 
         const isPasswordCorrect = await hashHelper.comparePassword(neededUser.password, password)
         if (isPasswordCorrect) {
             const deviceId = randomUUID()
-            await sessionsRepository.addNewDeviceSession(deviceId, neededUser.id, ip, deviceName)
+            await this.sessionsRepository.addNewDeviceSession(deviceId, neededUser.id, ip, deviceName)
             return {
                 accessToken : await jwtService.createAccessToken(neededUser),
                 refreshToken : await jwtService.createRefreshToken(neededUser, deviceId)
@@ -29,14 +39,14 @@ class AuthService {
     async registration(userData: inputUserType) {
 
         const confirmationCode = randomUUID()
-        await usersRepository.createUser(userData, confirmationCode)
+        await this.usersRepository.createUser(userData, confirmationCode)
         return await emailManager.sendConfirmCode(userData.email, confirmationCode)
 
     }
 
     async confirmEmail(confirmCode: string) {
 
-        const user = await usersQueryRep.findUserByConfirmCode(confirmCode)
+        const user = await this.usersQueryRep.findUserByConfirmCode(confirmCode)
         if (!user) {
             throw new Error ("Go register before trying to use confirmation code")
         }
@@ -46,22 +56,22 @@ class AuthService {
         if(user.emailConfirmationInfo.isConfirmed === true) {
             throw new Error ("Your email already confirmed")
         }
-        return await usersRepository.confirmEmail(user.id)
+        return await this.usersRepository.confirmEmail(user.id)
     }
 
     async resendConfirmCode (email: string,) {
 
-        const user = await usersQueryRep.findUserByLoginOrEmail(email)
+        const user = await this.usersQueryRep.findUserByLoginOrEmail(email)
         const code = randomUUID()
-        await usersRepository.changeConfirmCode(code, user!.id)
+        await this.usersRepository.changeConfirmCode(code, user!.id)
         return await emailManager.sendConfirmCode(email, code)
     }
 
     async refreshToken (refreshToken: string, refreshTokenInfo: refreshTokenInfoType) {
 
-        await tokenBlackListRepository.addNewTokenToBlackList(refreshToken)
+        await this.tokenBlackListRepository.addNewTokenToBlackList(refreshToken)
 
-        await sessionsRepository.updateDeviceSession(refreshTokenInfo.deviceId, refreshTokenInfo.id)
+        await this.sessionsRepository.updateDeviceSession(refreshTokenInfo.deviceId, refreshTokenInfo.id)
         return {
             accessToken: await jwtService.createAccessToken(refreshTokenInfo),
             refreshToken: await jwtService.createRefreshToken(refreshTokenInfo)
@@ -70,11 +80,10 @@ class AuthService {
 
     async logout (refreshToken: any, refreshTokenInfo: refreshTokenInfoType) {
 
-        await tokenBlackListRepository.addNewTokenToBlackList(refreshToken)
-        await sessionsRepository.deleteOneDeviceSession(refreshTokenInfo.id, refreshTokenInfo.deviceId)
+        await this.tokenBlackListRepository.addNewTokenToBlackList(refreshToken)
+        await this.sessionsRepository.deleteOneDeviceSession(refreshTokenInfo.id, refreshTokenInfo.deviceId)
         return true
 
     }
 }
 
-export const authService = new AuthService()

@@ -1,7 +1,9 @@
 import {sessionsCollection} from "../db/MongoDB";
+import {injectable} from "inversify";
 
 
-class SessionsRepository {
+@injectable()
+export class SessionsRepository {
 
     async addNewDeviceSession(deviceId: string, userId: string, ip: string | undefined, deviceName: string | undefined): Promise<void> {
         await sessionsCollection.insertOne({
@@ -32,5 +34,5 @@ class SessionsRepository {
     }
 }
 
-export const sessionsRepository = new SessionsRepository()
+
 

@@ -1,11 +1,9 @@
 import {Router} from "express";
-import {usersValidator} from "../Features/validators/usersValidator";
 import {inputErrorCheckValidator} from "../Features/globalFeatures/inputCheckErrorValidator";
-import {usersController} from "../Controllers/usersController";
-import {base64AuthorizationCheck} from "../Features/globalFeatures/authorizationCheck";
+import {authorizationCheck, usersController, usersValidator} from "../composition-root";
 
 export const usersRouter = Router()
 
-usersRouter.post("/",base64AuthorizationCheck, usersValidator.validationOfCreateUser(), inputErrorCheckValidator, usersController.createUser)
-usersRouter.get("/",base64AuthorizationCheck,usersController.getManyUsers)
-usersRouter.delete("/:id", base64AuthorizationCheck,usersController.deleteUser)
+usersRouter.post("/",authorizationCheck.base64AuthorizationCheck, usersValidator.validationOfCreateUser(), inputErrorCheckValidator, usersController.createUser.bind(usersController));
+usersRouter.get("/",authorizationCheck.base64AuthorizationCheck,usersController.getManyUsers.bind(usersController));
+usersRouter.delete("/:id", authorizationCheck.base64AuthorizationCheck,usersController.deleteUser.bind(usersController));

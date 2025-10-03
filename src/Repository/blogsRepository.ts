@@ -1,9 +1,11 @@
 import {blogsInputType, blogsViewType} from "../Types/Types";
 import {blogCollection} from "../db/MongoDB";
 import {DeleteResult, ObjectId, UpdateResult} from "mongodb";
+import {injectable} from "inversify";
 
 
-class BlogsRepository {
+@injectable()
+export class BlogsRepository {
 
     async create(newBlog: blogsInputType) {
 
@@ -35,5 +37,3 @@ class BlogsRepository {
         return result.modifiedCount !== 0
     }
 }
-
-export const blogsRepository = new BlogsRepository()

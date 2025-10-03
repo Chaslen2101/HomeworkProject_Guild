@@ -1,17 +1,15 @@
 import {Router} from "express";
-import {base64AuthorizationCheck, accessTokenCheck} from "../Features/globalFeatures/authorizationCheck";
-import {inputPostsValidation} from "../Features/validators/postsValidator";
 import {inputErrorCheckValidator} from "../Features/globalFeatures/inputCheckErrorValidator";
-import {postsController} from "../Controllers/postsController";
 import {commentInputValidator} from "../Features/validators/commentsValidator";
-import {commentsController} from "../Controllers/commentsController";
+import {authorizationCheck, commentsController, postsController, postsValidator} from "../composition-root";
+
 
 export const postsRouter = Router({})
 
-postsRouter.get("/", postsController.returnAllPosts)
-postsRouter.post("/", base64AuthorizationCheck,inputPostsValidation(), inputErrorCheckValidator,postsController.inputPost)
-postsRouter.get("/:id", postsController.findPostById)
-postsRouter.put("/:id", base64AuthorizationCheck, inputPostsValidation(), inputErrorCheckValidator,postsController.updatePostByID)
-postsRouter.delete("/:id",base64AuthorizationCheck,postsController.deletePostById)
-postsRouter.post("/:postId/comments", accessTokenCheck, commentInputValidator(), inputErrorCheckValidator, commentsController.createCommentForPost)
-postsRouter.get("/:postId/comments", commentsController.getCommentsForPost)
+postsRouter.get("/", postsController.returnAllPosts.bind(postsController))
+postsRouter.post("/", authorizationCheck.base64AuthorizationCheck,postsValidator.inputPostsValidation(), inputErrorCheckValidator,postsController.inputPost.bind(postsController))
+postsRouter.get("/:id", postsController.findPostById.bind(postsController))
+postsRouter.put("/:id", authorizationCheck.base64AuthorizationCheck, postsValidator.inputPostsValidation(), inputErrorCheckValidator,postsController.updatePostByID.bind(postsController))
+postsRouter.delete("/:id",authorizationCheck.base64AuthorizationCheck,postsController.deletePostById.bind(postsController))
+postsRouter.post("/:postId/comments", authorizationCheck.accessTokenCheck, commentInputValidator(), inputErrorCheckValidator, commentsController.createCommentForPost.bind(commentsController))
+postsRouter.get("/:postId/comments", commentsController.getCommentsForPost.bind(commentsController))

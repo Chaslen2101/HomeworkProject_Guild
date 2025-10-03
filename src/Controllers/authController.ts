@@ -1,21 +1,28 @@
 import {Request, Response} from "express"
-import {authService} from "../Services/authService";
+import {AuthService} from "../Services/authService";
 import {httpStatuses} from "../settings";
-import {usersQueryRep} from "../Repository/queryRep/usersQueryRep";
+import {UsersQueryRep} from "../Repository/queryRep/usersQueryRep";
+import {inject} from "inversify";
+import {BlogsQueryRep} from "../Repository/queryRep/blogsQueryRep";
 
 
-class AuthController {
+export class AuthController {
+
+    constructor(
+        @inject(UsersQueryRep) protected usersQueryRep: UsersQueryRep,
+        @inject(AuthService) protected authService: AuthService
+    ){}
 
     async login (req: Request, res: Response){
 
-        const neededUser = await usersQueryRep.findUserByLoginOrEmail(req.body.loginOrEmail)
+        const neededUser = await this.usersQueryRep.findUserByLoginOrEmail(req.body.loginOrEmail)
         if (!neededUser) {
             res
                 .status(httpStatuses.UNAUTHORIZED_401)
                 .json({})
             return
         }
-        const token = await authService.login(req.body.password, neededUser, req.ip, req.headers["user-agent"])
+        const token = await this.authService.login(req.body.password, neededUser, req.ip, req.headers["user-agent"])
         if (!token) {
             res
                 .status(httpStatuses.UNAUTHORIZED_401)
@@ -30,7 +37,7 @@ class AuthController {
 
     async getMyInfo (req: Request, res: Response){
 
-        const userInfo = await usersQueryRep.findUserById(req.user.id)
+        const userInfo = await this.usersQueryRep.findUserById(req.user.id)
         res
             .status(httpStatuses.OK_200)
             .json({
@@ -42,7 +49,7 @@ class AuthController {
 
     async registration (req: Request, res: Response){
 
-        const isEmailSent = await authService.registration(req.body)
+        const isEmailSent = await this.authService.registration(req.body)
         if (isEmailSent) {
             res
                 .status(httpStatuses.NO_CONTENT_204)
@@ -57,7 +64,7 @@ class AuthController {
     async confirmEmail (req: Request, res: Response){
 
         try {
-            await authService.confirmEmail(req.body.code)
+            await this.authService.confirmEmail(req.body.code)
             res
                 .status(httpStatuses.NO_CONTENT_204)
                 .json({})
@@ -77,7 +84,7 @@ class AuthController {
 
     async resendConfirmCode (req: Request, res: Response){
 
-        const isEmailSent = await authService.resendConfirmCode(req.body.email)
+        const isEmailSent = await this.authService.resendConfirmCode(req.body.email)
         if (isEmailSent) {
             res
                 .status(httpStatuses.NO_CONTENT_204)
@@ -91,7 +98,7 @@ class AuthController {
 
     async refreshToken (req: Request, res: Response){
 
-        const result = await authService.refreshToken(req.cookies.refreshToken, req.refreshTokenInfo)
+        const result = await this.authService.refreshToken(req.cookies.refreshToken, req.refreshTokenInfo)
         if (result) {
             res
                 .status(httpStatuses.OK_200)
@@ -106,7 +113,7 @@ class AuthController {
 
     async logout (req: Request, res: Response){
 
-        const result = await authService.logout(req.cookies.refreshToken, req.refreshTokenInfo)
+        const result = await this.authService.logout(req.cookies.refreshToken, req.refreshTokenInfo)
         if (result) {
             res
                 .status(httpStatuses.NO_CONTENT_204)
@@ -118,5 +125,3 @@ class AuthController {
         }
     }
 }
-
-export const authController = new AuthController()

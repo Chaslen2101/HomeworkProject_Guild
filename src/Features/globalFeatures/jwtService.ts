@@ -1,14 +1,15 @@
-import {userInfoForTokenType} from "../Types/Types";
+import {userInfoForTokenType} from "../../Types/Types";
 import jwt from "jsonwebtoken";
-import {SETTINGS} from "../settings";
+import {SETTINGS} from "../../settings";
 import {randomUUID} from "node:crypto";
+import {injectable} from "inversify";
 
 
-class JwtService {
+export const jwtService = {
 
     async createAccessToken(user: userInfoForTokenType) {
         return jwt.sign({id: user.id, login: user.login}, SETTINGS.SECRET_ACCESS_TOKEN_KEY, {expiresIn: "10s"})
-    }
+    },
 
     async verifyAccessToken(token: string) {
         try {
@@ -17,13 +18,13 @@ class JwtService {
             console.log("token error:" + e)
             return null
         }
-    }
+    },
 
     async createRefreshToken(user: any, someDeviceId?: string) {
 
         const deviceId = someDeviceId ? someDeviceId : user.deviceId
         return jwt.sign({deviceId: deviceId, id: user.id, login: user.login, UUID: randomUUID()}, SETTINGS.SECRET_REFRESH_TOKEN_KEY, {expiresIn: "20s"})
-    }
+    },
 
     async verifyRefreshToken(token: string) {
         try {
@@ -34,5 +35,3 @@ class JwtService {
         }
     }
 }
-
-export const jwtService = new JwtService()

@@ -1,9 +1,11 @@
 import {postsInputType, postsViewType} from "../Types/Types";
 import {postCollection} from "../db/MongoDB";
 import {ObjectId} from "mongodb";
+import {injectable} from "inversify";
 
 
-class PostsRepository {
+@injectable()
+export class PostsRepository {
 
     async create(inputData: postsInputType, blog: any) {
 
@@ -39,4 +41,3 @@ class PostsRepository {
     }
 }
 
-export const postsRepository = new PostsRepository()

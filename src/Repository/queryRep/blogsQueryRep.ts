@@ -1,9 +1,11 @@
 import {blogsPostsQueryType,inputQueryType} from "../../Types/Types";
 import {queryHelper} from "../../Features/globalFeatures/helper";
 import {blogCollection} from "../../db/MongoDB";
+import {injectable} from "inversify";
 
 
-class BlogsQueryRep {
+@injectable()
+export class BlogsQueryRep {
 
     async findManyBlogs(query: inputQueryType) {
 
@@ -29,5 +31,3 @@ class BlogsQueryRep {
         return await blogCollection.findOne({id: id}, {projection: {_id: 0}})
     }
 }
-
-export const blogsQueryRep = new BlogsQueryRep();

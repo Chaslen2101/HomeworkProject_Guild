@@ -1,31 +1,38 @@
 import {Request, Response} from "express";
 import {httpStatuses} from "../settings";
-import {postsQueryRep} from "../Repository/queryRep/postsQueryRep";
-import {blogsQueryRep} from "../Repository/queryRep/blogsQueryRep";
+import {PostsQueryRep} from "../Repository/queryRep/postsQueryRep";
+import {BlogsQueryRep} from "../Repository/queryRep/blogsQueryRep";
 import {inputQueryType} from "../Types/Types";
-import {postsService} from "../Services/postsServices";
+import {PostsService} from "../Services/postsServices";
+import {inject} from "inversify";
 
 
-class PostsController {
+export class PostsController {
+
+    constructor(
+        @inject(PostsQueryRep )protected postsQueryRep: PostsQueryRep,
+        @inject(BlogsQueryRep) protected blogsQueryRep: BlogsQueryRep,
+        @inject(PostsService) protected postsService: PostsService
+    ){}
 
     async returnAllPosts (req: Request, res: Response){
         res
             .status(httpStatuses.OK_200)
-            .json(await postsQueryRep.findManyPosts(req.query as inputQueryType))
+            .json(await this.postsQueryRep.findManyPosts(req.query as inputQueryType))
     }
 
     async inputPost (req: Request, res: Response) {
-        const neededBlog = await blogsQueryRep.findBlogByID(req.body.blogId)
+        const neededBlog = await this.blogsQueryRep.findBlogByID(req.body.blogId)
         if (neededBlog) {
-            const createdPostId = await postsService.createPost(req.body, neededBlog)
+            const createdPostId = await this.postsService.createPost(req.body, neededBlog)
             res
                 .status(httpStatuses.CREATED_201)
-                .json(await postsQueryRep.findPostById(createdPostId))
+                .json(await this.postsQueryRep.findPostById(createdPostId))
         }
     }
 
     async findPostById (req: Request, res: Response){
-        const neededPost = await postsQueryRep.findPostById(req.params.id)
+        const neededPost = await this.postsQueryRep.findPostById(req.params.id)
 
         if (neededPost) {
             res
@@ -40,7 +47,7 @@ class PostsController {
 
     async updatePostByID (req: Request, res: Response){
 
-        const isUpdated = await postsService.updatePost(req.params.id, req.body)
+        const isUpdated = await this.postsService.updatePost(req.params.id, req.body)
         if (isUpdated) {
             res
                 .status(httpStatuses.NO_CONTENT_204)
@@ -53,7 +60,7 @@ class PostsController {
     }
 
     async deletePostById (req: Request, res: Response){
-        const isDeleted = await postsService.deletePost(req.params.id)
+        const isDeleted = await this.postsService.deletePost(req.params.id)
         if (isDeleted) {
             res
                 .status(httpStatuses.NO_CONTENT_204)
@@ -65,5 +72,3 @@ class PostsController {
         }
     }
 }
-
-export const postsController = new PostsController()

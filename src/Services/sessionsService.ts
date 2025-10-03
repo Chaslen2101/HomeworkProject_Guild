@@ -1,25 +1,31 @@
-import {sessionsQueryRep} from "../Repository/queryRep/sessionsQueryRep";
-import {sessionsRepository} from "../Repository/sessionsRepository";
+import {SessionsQueryRep} from "../Repository/queryRep/sessionsQueryRep";
+import {SessionsRepository} from "../Repository/sessionsRepository";
 import {refreshTokenInfoType} from "../Types/Types";
+import {inject, injectable} from "inversify";
 
 
-class SessionsService {
+@injectable()
+export class SessionsService {
+
+    constructor(
+        @inject(SessionsRepository) protected sessionsRepository: SessionsRepository,
+        @inject(SessionsQueryRep) protected sessionsQueryRep: SessionsQueryRep
+        ) {}
 
     async getAllSessions(refreshToken: refreshTokenInfoType) {
 
-        return await sessionsQueryRep.getAllSessions(refreshToken.id)
+        return await this.sessionsQueryRep.getAllSessions(refreshToken.id)
     }
 
     async deleteAllSessions(refreshToken: refreshTokenInfoType) {
 
-        await sessionsRepository.deleteAllDeviceSessions(refreshToken.id, refreshToken.deviceId)
+        await this.sessionsRepository.deleteAllDeviceSessions(refreshToken.id, refreshToken.deviceId)
         return
     }
 
     async deleteOneSession(userId: string, deviceId: string) {
 
-        return await sessionsRepository.deleteOneDeviceSession(userId, deviceId)
+        return await this.sessionsRepository.deleteOneDeviceSession(userId, deviceId)
     }
 }
 
-export const sessionsService = new SessionsService()

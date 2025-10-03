@@ -1,9 +1,8 @@
 import {Router} from "express";
-import {sessionsController} from "../Controllers/sessionsController";
-import {refreshTokenCheck} from "../Features/globalFeatures/authorizationCheck";
+import {authorizationCheck, sessionsController} from "../composition-root";
 
 export const securityDeviceRouter = Router()
 
-securityDeviceRouter.get("/", refreshTokenCheck, sessionsController.getActiveSessions)
-securityDeviceRouter.delete("/", refreshTokenCheck,sessionsController.deleteAllSessions)
-securityDeviceRouter.delete("/:deviceId", refreshTokenCheck, sessionsController.deleteSession)
+securityDeviceRouter.get("/", authorizationCheck.refreshTokenCheck, sessionsController.getActiveSessions.bind(sessionsController));
+securityDeviceRouter.delete("/", authorizationCheck.refreshTokenCheck,sessionsController.deleteAllSessions.bind(sessionsController));
+securityDeviceRouter.delete("/:deviceId", authorizationCheck.refreshTokenCheck, sessionsController.deleteSession.bind(sessionsController));

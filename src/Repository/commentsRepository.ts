@@ -1,9 +1,11 @@
 import {commentContentType, existCommentType, userViewType} from "../Types/Types";
 import {commentCollection} from "../db/MongoDB";
 import {ObjectId} from "mongodb";
+import {injectable} from "inversify";
 
 
-class CommentsRepository {
+@injectable()
+export class CommentsRepository {
 
     async create (comment:commentContentType, userInfo: userViewType, postId: string) {
         const newComment: existCommentType = new existCommentType(
@@ -30,4 +32,3 @@ class CommentsRepository {
     }
 }
 
-export const commentsRepository = new CommentsRepository()

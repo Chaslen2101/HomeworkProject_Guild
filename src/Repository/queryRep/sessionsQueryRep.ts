@@ -1,7 +1,9 @@
 import {sessionsCollection} from "../../db/MongoDB";
+import {injectable} from "inversify";
 
 
-class SessionsQueryRep {
+@injectable()
+export class SessionsQueryRep {
 
     async getAllSessions(userId: string): Promise<any> {
 
@@ -23,4 +25,3 @@ class SessionsQueryRep {
     }
 }
 
-export const sessionsQueryRep = new SessionsQueryRep()
