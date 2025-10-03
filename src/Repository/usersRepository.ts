@@ -1,5 +1,5 @@
 import {userCollection} from "../db/MongoDB";
-import {existUserType, inputUserType} from "../Types/Types";
+import {ExistUserType, inputUserType} from "../Types/Types";
 import {ObjectId} from "mongodb";
 import {hashHelper} from "../Features/globalFeatures/helper";
 import {UUID} from "node:crypto";
@@ -11,29 +11,36 @@ import {injectable} from "inversify";
 export class UsersRepository {
 
     async createUser (newUserData: inputUserType, confirmCode?: UUID) {
+
         const hashedPassword = await hashHelper.hashNewPassword(newUserData.password)
-        const newUser: existUserType = {
-            id: new ObjectId().toString(),
-            login: newUserData.login,
-            email: newUserData.email,
-            password: hashedPassword,
-            createdAt: new Date().toISOString(),
-            emailConfirmationInfo: {
+        const newUser: ExistUserType = new ExistUserType(
+            new ObjectId().toString(),
+            newUserData.login,
+            newUserData.email,
+            hashedPassword,
+            new Date().toISOString(),
+            {
                 confirmationCode: confirmCode ? confirmCode : null,
                 expirationDate: add(new Date(),{hours: 1}),
                 isConfirmed: false
+            },
+            {
+                confirmationCode: null,
+                expirationDate: new Date(),
             }
-        }
+        )
         await userCollection.insertOne(newUser)
         return newUser.id
     }
 
     async deleteUser (id: string) {
+
         const result = await userCollection.deleteOne({id: id})
         return result.deletedCount !== 0
     }
 
     async confirmEmail (userId:string) {
+
         const result = await userCollection.updateOne(
             {id: userId},
             {$set:{"emailConfirmationInfo.isConfirmed": true}}
@@ -41,11 +48,35 @@ export class UsersRepository {
         return result.modifiedCount === 1
     }
 
-    async changeConfirmCode (code: string, userId: string) {
+    async changeEmailConfirmCode (code: string, userId: string) {
+
         const result = await userCollection.updateOne(
             {id: userId},
             {$set:{"emailConfirmationInfo.confirmationCode": code}}
         )
+        return result.modifiedCount === 1
+    }
+
+    async changePasswordConfirmCode (code: string, userId: string) {
+
+        const expirationDate: Date = add(new Date(),{hours: 1})
+        const result = await userCollection.updateOne(
+            {id: userId},
+            {$set:
+                        {"passwordRecoveryCode.confirmationCode": code,
+                         "passwordRecoveryCode.expirationDate": expirationDate},
+            }
+        )
+        return result.modifiedCount === 1
+    }
+
+    async changePassword (newPassword: string, userId: string) {
+
+        const result = await userCollection.updateOne(
+            {id: userId},
+            {$set:{password:newPassword}}
+        )
+
         return result.modifiedCount === 1
     }
 }

@@ -1,5 +1,5 @@
 import {userCollection} from "../../db/MongoDB";
-import {existUserType, userQueryType, userViewType} from "../../Types/Types";
+import {ExistUserType, userQueryType, userViewType} from "../../Types/Types";
 import {mapToView} from "../../Features/globalFeatures/helper";
 import {WithId} from "mongodb";
 import {injectable} from "inversify";
@@ -9,14 +9,17 @@ import {injectable} from "inversify";
 export class UsersQueryRep {
 
     async findUserByLoginOrEmail (loginOrEmail: string) {
+
         return await userCollection.findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]}, {projection: {_id: 0}});
     }
 
     async findUserById (id: string) {
+
         return mapToView.mapUser(await userCollection.findOne({id: id,},{projection: {_id: 0}}))
     }
 
     async findManyUsersByLoginOrEmail (sanitizedQuery: userQueryType) {
+
         let filter = {}
         if (sanitizedQuery.searchLoginTerm && sanitizedQuery.searchEmailTerm) {
             filter = {$or:[{email:{$regex: sanitizedQuery.searchEmailTerm, $options: "i"}},{login:{$regex: sanitizedQuery.searchLoginTerm, $options:"i"}}]}
@@ -30,7 +33,7 @@ export class UsersQueryRep {
             .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
             .limit(sanitizedQuery.pageSize)
             .skip((sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize)
-            .toArray() as WithId<existUserType>[]
+            .toArray() as WithId<ExistUserType>[]
         const totalCount = await userCollection.countDocuments(filter)
         const users: userViewType[] = mapToView.mapUsers(items)
         return {
@@ -42,8 +45,14 @@ export class UsersQueryRep {
         }
     }
 
-    async findUserByConfirmCode (code: string) {
+    async findUserByEmailConfirmCode (code: string) {
+
         return userCollection.findOne({"emailConfirmationInfo.confirmationCode": code},{projection:{_id:0}})
+    }
+
+    async findUserByPasswordRecoveryCode (code: string) {
+
+        return userCollection.findOne({"passwordRecoveryCode.confirmationCode": code},{projection:{_id:0}})
     }
 }
 

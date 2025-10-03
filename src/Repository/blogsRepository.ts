@@ -27,11 +27,12 @@ export class BlogsRepository {
     }
 
     async update(id: string, newInfo: blogsInputType): Promise<boolean> {
-        const result: UpdateResult = await blogCollection.updateOne({id: id}, {
-            $set: {
-                name: newInfo.name,
-                description: newInfo.description,
-                websiteUrl: newInfo.websiteUrl
+        const result: UpdateResult = await blogCollection.updateOne(
+            {id: id},
+            {$set: {
+                        name: newInfo.name,
+                        description: newInfo.description,
+                        websiteUrl: newInfo.websiteUrl
             }
         })
         return result.modifiedCount !== 0

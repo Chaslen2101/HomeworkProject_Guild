@@ -1,7 +1,8 @@
 import {apiRequestInfoCollection} from "../db/MongoDB";
+import {injectable} from "inversify";
 
-
-class ApiRequestInfoRepository {
+@injectable()
+export class ApiRequestInfoRepository {
 
     async addApiRequestInfo (ip: string | undefined, URL: string, date: Date): Promise<any> {
         await apiRequestInfoCollection.insertOne({ IP: ip, URL: URL, date: date });
@@ -19,5 +20,3 @@ class ApiRequestInfoRepository {
         await apiRequestInfoCollection.deleteMany({IP: ip, URL: URL, date: {$not:{$eq: date}}})
     }
 }
-
-export const apiRequestInfoRepository = new ApiRequestInfoRepository()

@@ -1,10 +1,10 @@
 import {NextFunction, Request, Response} from "express";
-import {apiRequestInfoRepository} from "../../Repository/apiRequestInfoRepository";
 import {httpStatuses} from "../../settings";
 import {differenceInMilliseconds, max, min} from "date-fns";
+import {apiRequestInfoRepository} from "../../composition-root";
 
 
-export const RequestInfoCollector = async (req: Request, res: Response, next: NextFunction) => {
+export const requestInfoCollector = async (req: Request, res: Response, next: NextFunction) => {
 
     const date = new Date();
 

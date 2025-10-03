@@ -3,7 +3,6 @@ import {AuthService} from "../Services/authService";
 import {httpStatuses} from "../settings";
 import {UsersQueryRep} from "../Repository/queryRep/usersQueryRep";
 import {inject} from "inversify";
-import {BlogsQueryRep} from "../Repository/queryRep/blogsQueryRep";
 
 
 export class AuthController {
@@ -61,10 +60,10 @@ export class AuthController {
         }
     }
 
-    async confirmEmail (req: Request, res: Response){
+    async confirmEmailForRegistration (req: Request, res: Response){
 
         try {
-            await this.authService.confirmEmail(req.body.code)
+            await this.authService.confirmEmailForRegistration(req.body.code)
             res
                 .status(httpStatuses.NO_CONTENT_204)
                 .json({})
@@ -82,9 +81,9 @@ export class AuthController {
         }
     }
 
-    async resendConfirmCode (req: Request, res: Response){
+    async resendConfirmCodeForRegistration (req: Request, res: Response){
 
-        const isEmailSent = await this.authService.resendConfirmCode(req.body.email)
+        const isEmailSent = await this.authService.resendConfirmCodeForRegistration(req.body.email)
         if (isEmailSent) {
             res
                 .status(httpStatuses.NO_CONTENT_204)
@@ -121,6 +120,40 @@ export class AuthController {
         } else {
             res
                 .status(httpStatuses.UNAUTHORIZED_401)
+                .json({})
+        }
+    }
+
+    async sendPasswordRecoveryCode (req: Request, res: Response) {
+
+        try {
+            await this.authService.sendPasswordRecoveryCode(req.body.email)
+                res
+                    .status(httpStatuses.NO_CONTENT_204)
+                    .json({})
+        } catch (e) {
+            console.log(e)
+            res
+                .status(httpStatuses.NO_CONTENT_204)
+                .json({})
+        }
+    }
+
+    async recoverPassword (req: Request, res: Response) {
+
+        try {
+
+            await this.authService.recoverPassword(req.body.newPassword, req.body.recoveryCode)
+
+            res
+                .status(httpStatuses.NO_CONTENT_204)
+                .json({})
+
+        } catch (e) {
+
+            console.log(e)
+            res
+                .status(httpStatuses.BAD_REQUEST_400)
                 .json({})
         }
     }

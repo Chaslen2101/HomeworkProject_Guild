@@ -25,6 +25,7 @@ import {Container} from "inversify";
 import {UsersValidator} from "./Features/validators/usersValidator";
 import {AuthorizationCheck} from "./Features/globalFeatures/authorizationCheck";
 import {PostsValidator} from "./Features/validators/postsValidator";
+import {ApiRequestInfoRepository} from "./Repository/apiRequestInfoRepository";
 
 // export const usersRepository: UsersRepository = new UsersRepository()
 // export const usersQueryRep = new UsersQueryRep()
@@ -69,6 +70,7 @@ container.bind(CommentsQueryRep).to(CommentsQueryRep)
 container.bind(BlogsRepository).to(BlogsRepository)
 container.bind(BlogsQueryRep).to(BlogsQueryRep)
 container.bind(TokenBlackListRepository).to(TokenBlackListRepository)
+container.bind(ApiRequestInfoRepository).to(ApiRequestInfoRepository)
 
 container.bind(UsersService).to(UsersService)
 container.bind(SessionsService).to(SessionsService)
@@ -94,3 +96,4 @@ export const authController:AuthController = container.get(AuthController)
 export const usersValidator: UsersValidator = container.get(UsersValidator)
 export const authorizationCheck: AuthorizationCheck = container.get(AuthorizationCheck)
 export const postsValidator: PostsValidator = container.get(PostsValidator)
+export const apiRequestInfoRepository: ApiRequestInfoRepository = container.get(ApiRequestInfoRepository)

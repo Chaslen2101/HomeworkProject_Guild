@@ -69,17 +69,23 @@ export type inputUserType = {
     email: string
 }
 
-export type existUserType = {
-    id: string,
-    login: string,
-    email:string,
-    password: string,
-    createdAt: string,
-    emailConfirmationInfo: {
-        confirmationCode: string | null,
-        expirationDate: Date,
-        isConfirmed: boolean
-    },
+export class ExistUserType {
+    constructor(
+        public id: string,
+        public login: string,
+        public email:string,
+        public password: string,
+        public createdAt: string,
+        public emailConfirmationInfo: {
+            confirmationCode: string | null,
+            expirationDate: Date,
+            isConfirmed: boolean
+        },
+        public passwordRecoveryCode: {
+            confirmationCode: null,
+            expirationDate: Date
+        }
+    ) {}
 }
 
 export type userInfoForTokenType = {

@@ -9,7 +9,6 @@ import {compareDesc} from "date-fns";
 import {TokenBlackListRepository} from "../Repository/tokenBlackListRepository";
 import {SessionsRepository} from "../Repository/sessionsRepository";
 import {inject, injectable} from "inversify";
-import {BlogsRepository} from "../Repository/blogsRepository";
 
 
 @injectable()
@@ -38,15 +37,16 @@ export class AuthService {
 
     async registration(userData: inputUserType) {
 
+        const subject: string = "Verify your email address"
         const confirmationCode = randomUUID()
         await this.usersRepository.createUser(userData, confirmationCode)
-        return await emailManager.sendConfirmCode(userData.email, confirmationCode)
+        return await emailManager.sendConfirmCode(userData.email, confirmationCode,subject)
 
     }
 
-    async confirmEmail(confirmCode: string) {
+    async confirmEmailForRegistration(confirmCode: string) {
 
-        const user = await this.usersQueryRep.findUserByConfirmCode(confirmCode)
+        const user = await this.usersQueryRep.findUserByEmailConfirmCode(confirmCode)
         if (!user) {
             throw new Error ("Go register before trying to use confirmation code")
         }
@@ -59,12 +59,16 @@ export class AuthService {
         return await this.usersRepository.confirmEmail(user.id)
     }
 
-    async resendConfirmCode (email: string,) {
+    async resendConfirmCodeForRegistration (email: string,) {
 
+        const subject: string = "Verify your email address"
         const user = await this.usersQueryRep.findUserByLoginOrEmail(email)
+        if(!user){
+            return false
+        }
         const code = randomUUID()
-        await this.usersRepository.changeConfirmCode(code, user!.id)
-        return await emailManager.sendConfirmCode(email, code)
+        await this.usersRepository.changeEmailConfirmCode(code, user.id)
+        return await emailManager.sendConfirmCode(email, code,subject)
     }
 
     async refreshToken (refreshToken: string, refreshTokenInfo: refreshTokenInfoType) {
@@ -84,6 +88,47 @@ export class AuthService {
         await this.sessionsRepository.deleteOneDeviceSession(refreshTokenInfo.id, refreshTokenInfo.deviceId)
         return true
 
+    }
+
+    async sendPasswordRecoveryCode (email: string) {
+
+        const user = await this.usersQueryRep.findUserByLoginOrEmail(email)
+        if (!user) {
+            throw new Error ("User doesnt exists")
+        }
+
+        const subject: string = "To recover your password"
+        const code = randomUUID()
+        const isEmailSent = await emailManager.sendConfirmCode(email,code,subject)
+        if(!isEmailSent) {
+            throw new Error ("Cannot send email, manager problems")
+        }
+
+        const isConfirmCodeChanged = await this.usersRepository.changePasswordConfirmCode(code,user.id)
+        if(!isConfirmCodeChanged) {
+            throw new Error ("Cannot change code through repo")
+        }
+
+        return true
+    }
+
+    async recoverPassword (newPassword: string, recoveryCode: string) {
+
+        const user = await this.usersQueryRep.findUserByPasswordRecoveryCode(recoveryCode)
+
+        if(!user) {
+            throw new Error ("User doesnt exists")
+        }
+        if(compareDesc(new Date(),user.passwordRecoveryCode.expirationDate) === -1) {
+            throw new Error ("Your confirmation code expired")
+        }
+
+        const isPasswordChanged = await this.usersRepository.changePassword(newPassword, recoveryCode)
+        if(!isPasswordChanged) {
+            throw new Error ("Cannot change password through repo")
+        }
+
+        return
     }
 }
 
