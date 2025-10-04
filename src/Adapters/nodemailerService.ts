@@ -9,6 +9,14 @@ const transporter = nodemailer.createTransport({
     }
 })
 
+// const transporter = nodemailer.createTransport({
+//     service: "gmail",
+//     auth:{
+//         user: "chaslen2101.itincubator@gmail.com",
+//         pass:
+//     }
+// })
+
 export const nodemailerService = {
 
     async sendEmail (emailAddress: string, subject: string, text: string) {
