@@ -25,6 +25,7 @@ export class AuthService {
 
         const isPasswordCorrect = await hashHelper.comparePassword(neededUser.password, password)
         if (isPasswordCorrect) {
+            console.log("password correct")
             const deviceId = randomUUID()
             await this.sessionsRepository.addNewDeviceSession(deviceId, neededUser.id, ip, deviceName)
             return {
@@ -124,7 +125,8 @@ export class AuthService {
             throw new Error ("Your confirmation code expired")
         }
 
-        const isPasswordChanged = await this.usersRepository.changePassword(newPassword, user.id)
+        const hashedPassword = await hashHelper.hashNewPassword(newPassword)
+        const isPasswordChanged = await this.usersRepository.changePassword(hashedPassword, user.id)
         if(!isPasswordChanged) {
             throw new Error ("Cannot change password through repo")
         }
