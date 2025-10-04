@@ -25,8 +25,10 @@ export const nodemailerService = {
             from: '"Chaslen2101" <Chaslen2101.itincubator@gmail.com>',
             to: emailAddress,
             subject: subject,
-            text: text
-        })
+            html: `<h1>Password recovery</h1>
+            <p>To finish password recovery please follow the link below:
+            <a href=${text}>recovery password</a></p>`
+    })
         return
     }
 }
