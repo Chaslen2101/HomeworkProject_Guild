@@ -24,8 +24,9 @@ export class PostsRepository {
     }
 
     async update(id: string, newInfo: postsInputType) {
-        const result = await postCollection.updateOne({id: id}, {
-            $set: {
+        const result = await postCollection.updateOne(
+            {id: id},
+            {$set: {
                 title: newInfo.title,
                 shortDescription: newInfo.shortDescription,
                 content: newInfo.content,

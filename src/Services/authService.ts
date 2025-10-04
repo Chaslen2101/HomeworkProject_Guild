@@ -124,7 +124,7 @@ export class AuthService {
             throw new Error ("Your confirmation code expired")
         }
 
-        const isPasswordChanged = await this.usersRepository.changePassword(newPassword, recoveryCode)
+        const isPasswordChanged = await this.usersRepository.changePassword(newPassword, user.id)
         if(!isPasswordChanged) {
             throw new Error ("Cannot change password through repo")
         }
