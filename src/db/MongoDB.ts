@@ -16,8 +16,6 @@ const client = new MongoClient(url, {
     }
 });
 
-
-
 export const db = client.db(mongoSettings.dbName)
 export const blogCollection = db.collection(mongoSettings.blogCollectionName)
 export const postCollection = db.collection(mongoSettings.postCollectionName)
@@ -26,7 +24,6 @@ export const commentCollection = db.collection(mongoSettings.commentCollectionNa
 export const refreshTokenCollection = db.collection(mongoSettings.refreshTokenBlackListName)
 export const apiRequestInfoCollection = db.collection(mongoSettings.apiRequestInfoCollectionName)
 export const sessionsCollection = db.collection(mongoSettings.sessionsCollectionName)
-
 
 export async function runDB() {
     try {
