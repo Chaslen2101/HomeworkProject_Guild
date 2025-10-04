@@ -7,7 +7,7 @@ import {apiRequestInfoRepository} from "../../composition-root";
 export const requestInfoCollector = async (req: Request, res: Response, next: NextFunction) => {
 
     const date = new Date();
-
+    console.log(req.originalUrl)
     await apiRequestInfoRepository.addApiRequestInfo(req.ip, req.originalUrl, date)
 
     const numberOfRequests = await apiRequestInfoRepository.findApiRequestInfo(req.ip, req.originalUrl)
@@ -26,7 +26,7 @@ export const requestInfoCollector = async (req: Request, res: Response, next: Ne
         console.log("newPatch")
 
         if (difference >= 10000) {
-            await apiRequestInfoRepository.deleteApiRequestInfo(req.ip, req.originalUrl, date)
+            await apiRequestInfoRepository.deleteApiRequestInfo(req.ip, req.originalUrl, earliestRequest)
             next()
         }else {
             res

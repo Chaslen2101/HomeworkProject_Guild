@@ -25,7 +25,6 @@ export class AuthService {
 
         const isPasswordCorrect = await hashHelper.comparePassword(neededUser.password, password)
         if (isPasswordCorrect) {
-            console.log("password correct")
             const deviceId = randomUUID()
             await this.sessionsRepository.addNewDeviceSession(deviceId, neededUser.id, ip, deviceName)
             return {

@@ -17,6 +17,6 @@ export class ApiRequestInfoRepository {
     }
 
     async deleteApiRequestInfo (ip: string | undefined, URL: string, date: Date): Promise<any> {
-        await apiRequestInfoCollection.deleteMany({IP: ip, URL: URL, date: {$not:{$eq: date}}})
+        await apiRequestInfoCollection.deleteOne({IP: ip, URL: URL, date: date})
     }
 }

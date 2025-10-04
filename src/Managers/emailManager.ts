@@ -5,6 +5,7 @@ class EmailManager {
 
     async sendConfirmCode (emailAddress: string, confirmCode: string, subject: string) {
         try {
+            // console.log(confirmCode)
             let queryName:string = ""
             if(subject === "Verify your email address") {
                 queryName = "registration-confirmation?code"
