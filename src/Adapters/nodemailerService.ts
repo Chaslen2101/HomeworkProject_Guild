@@ -1,10 +1,11 @@
 import nodemailer from "nodemailer"
 
-const transport = nodemailer.createTransport({
-    service: "gmail",
+const transporter = nodemailer.createTransport({
+    host:"smtp.sendgrid.net",
+    port: 587,
     auth:{
-        user: "Chaslen2101.itincubator@gmail.com",
-        pass: "xall mgjd luaq awxt"
+        user: process.env.SENDGREED_USERNAME,
+        pass: process.env.SENDGREED_PASSWORD
     }
 })
 
@@ -12,7 +13,7 @@ export const nodemailerService = {
 
     async sendEmail (emailAddress: string, subject: string, text: string) {
 
-        await transport.sendMail({
+        await transporter.sendMail({
             from: '"Chaslen2101" <Chaslen2101.itincubator@gmail.com>',
             to: emailAddress,
             subject: subject,
