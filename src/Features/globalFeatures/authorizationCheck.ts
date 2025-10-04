@@ -4,7 +4,7 @@ import {jwtService} from "./jwtService";
 import {UsersQueryRep} from "../../Repository/queryRep/usersQueryRep";
 import {TokenBlackListRepository} from "../../Repository/tokenBlackListRepository";
 import {SessionsQueryRep} from "../../Repository/queryRep/sessionsQueryRep";
-import {inject, injectable} from "inversify";
+import {inject} from "inversify";
 
 
 export class AuthorizationCheck {
@@ -27,7 +27,7 @@ export class AuthorizationCheck {
 
     base64AuthorizationCheck = (req: Request, res: Response, next: NextFunction) => {
         const auth = req.headers['authorization'] as string // 'Basic xxxx'
-        // console.log(auth)
+
         if (!auth) {
             res
                 .status(401)

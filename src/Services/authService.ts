@@ -103,7 +103,7 @@ export class AuthService {
         if(!isEmailSent) {
             throw new Error ("Cannot send email, manager problems")
         }
-
+        console.log("email sent")
         const isConfirmCodeChanged = await this.usersRepository.changePasswordConfirmCode(code,user.id)
         if(!isConfirmCodeChanged) {
             throw new Error ("Cannot change code through repo")

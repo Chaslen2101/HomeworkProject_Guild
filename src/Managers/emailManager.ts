@@ -7,15 +7,16 @@ class EmailManager {
         try {
             let queryName:string = ""
             if(subject === "Verify your email address") {
-                queryName = "code"
+                queryName = "registration-confirmation?code"
             }
             if(subject === "To recover your password") {
-                queryName = "recoveryCode"
+                queryName = "password-recovery?recoveryCode"
             }
-            const confirmLink = `https://homework-project-guild.vercel.app/auth/registration-confirmation?${queryName}=${confirmCode}`
+            const confirmLink = `https://homework-project-guild.vercel.app/auth/${queryName}=${confirmCode}`
             await nodemailerService.sendEmail(emailAddress,subject,confirmLink)
             return true
-        }catch {
+        }catch (e) {
+            console.error(e)
             return false
         }
     }

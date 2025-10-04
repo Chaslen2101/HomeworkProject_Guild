@@ -150,7 +150,6 @@ export class AuthController {
                 .json({})
 
         } catch (e) {
-
             console.log(e)
             res
                 .status(httpStatuses.BAD_REQUEST_400)
