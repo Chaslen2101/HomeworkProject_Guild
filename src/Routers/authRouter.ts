@@ -13,5 +13,5 @@ authRouter.post("/registration-confirmation", requestInfoCollector,authControlle
 authRouter.post("/registration-email-resending", requestInfoCollector, usersValidator.emailValidation(), inputErrorCheckValidator,authController.resendConfirmCodeForRegistration.bind(authController))
 authRouter.post("/refresh-token", authorizationCheck.refreshTokenCheck, authController.refreshToken.bind(authController))
 authRouter.post("/logout", authorizationCheck.refreshTokenCheck, authController.logout.bind(authController))
-authRouter.post("password-recovery",requestInfoCollector,isEmailValidator(),inputErrorCheckValidator,authController.sendPasswordRecoveryCode)
+authRouter.post("/password-recovery",requestInfoCollector,isEmailValidator(),inputErrorCheckValidator,authController.sendPasswordRecoveryCode)
 authRouter.post("/new-password",requestInfoCollector,newPasswordRecoveryValidator(),inputErrorCheckValidator,authController.recoverPassword)
