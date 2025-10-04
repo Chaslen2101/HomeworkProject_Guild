@@ -92,17 +92,18 @@ export class AuthService {
 
     async sendPasswordRecoveryCode (email: string) {
 
-        const user = await this.usersQueryRep.findUserByLoginOrEmail(email)
-        if (!user) {
-            throw new Error ("User doesnt exists")
-        }
-
         const subject: string = "To recover your password"
         const code = randomUUID()
         const isEmailSent = await emailManager.sendConfirmCode(email,code,subject)
         if(!isEmailSent) {
             throw new Error ("Cannot send email, manager problems")
         }
+
+        const user = await this.usersQueryRep.findUserByLoginOrEmail(email)
+        if (!user) {
+            throw new Error ("User doesnt exists")
+        }
+
         console.log("email sent")
         const isConfirmCodeChanged = await this.usersRepository.changePasswordConfirmCode(code,user.id)
         if(!isConfirmCodeChanged) {
