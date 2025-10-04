@@ -10,9 +10,10 @@ export class AuthController {
     constructor(
         @inject(UsersQueryRep) protected usersQueryRep: UsersQueryRep,
         @inject(AuthService) protected authService: AuthService
-    ){}
+    ) {
+    }
 
-    async login (req: Request, res: Response){
+    async login(req: Request, res: Response) {
 
         const neededUser = await this.usersQueryRep.findUserByLoginOrEmail(req.body.loginOrEmail)
         if (!neededUser) {
@@ -34,7 +35,7 @@ export class AuthController {
         }
     }
 
-    async getMyInfo (req: Request, res: Response){
+    async getMyInfo(req: Request, res: Response) {
 
         const userInfo = await this.usersQueryRep.findUserById(req.user.id)
         res
@@ -46,7 +47,7 @@ export class AuthController {
             })
     }
 
-    async registration (req: Request, res: Response){
+    async registration(req: Request, res: Response) {
 
         const isEmailSent = await this.authService.registration(req.body)
         if (isEmailSent) {
@@ -60,7 +61,7 @@ export class AuthController {
         }
     }
 
-    async confirmEmailForRegistration (req: Request, res: Response){
+    async confirmEmailForRegistration(req: Request, res: Response) {
 
         try {
             await this.authService.confirmEmailForRegistration(req.body.code)
@@ -81,7 +82,7 @@ export class AuthController {
         }
     }
 
-    async resendConfirmCodeForRegistration (req: Request, res: Response){
+    async resendConfirmCodeForRegistration(req: Request, res: Response) {
 
         const isEmailSent = await this.authService.resendConfirmCodeForRegistration(req.body.email)
         if (isEmailSent) {
@@ -95,7 +96,7 @@ export class AuthController {
         }
     }
 
-    async refreshToken (req: Request, res: Response){
+    async refreshToken(req: Request, res: Response) {
 
         const result = await this.authService.refreshToken(req.cookies.refreshToken, req.refreshTokenInfo)
         if (result) {
@@ -110,7 +111,7 @@ export class AuthController {
         }
     }
 
-    async logout (req: Request, res: Response){
+    async logout(req: Request, res: Response) {
 
         const result = await this.authService.logout(req.cookies.refreshToken, req.refreshTokenInfo)
         if (result) {
@@ -124,13 +125,13 @@ export class AuthController {
         }
     }
 
-    async sendPasswordRecoveryCode (req: Request, res: Response) {
+    async sendPasswordRecoveryCode(req: Request, res: Response) {
 
         try {
             await this.authService.sendPasswordRecoveryCode(req.body.email)
-                res
-                    .status(httpStatuses.NO_CONTENT_204)
-                    .json({})
+            res
+                .status(httpStatuses.NO_CONTENT_204)
+                .json({})
         } catch (e) {
             console.log(e)
             res
@@ -139,10 +140,9 @@ export class AuthController {
         }
     }
 
-    async recoverPassword (req: Request, res: Response) {
+    async recoverPassword(req: Request, res: Response) {
 
         try {
-
             await this.authService.recoverPassword(req.body.newPassword, req.body.recoveryCode)
 
             res
@@ -153,7 +153,12 @@ export class AuthController {
             console.log(e)
             res
                 .status(httpStatuses.BAD_REQUEST_400)
-                .json({})
+                .json({
+                    errorsMessages: [{
+                        message: "Incorrect recovery code",
+                        field: "recoveryCode"
+                    }]
+                })
         }
     }
 }
