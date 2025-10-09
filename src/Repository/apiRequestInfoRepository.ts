@@ -1,22 +1,25 @@
-import {apiRequestInfoCollection} from "../db/MongoDB";
+import {apiRequestsInfoModel} from "../db/MongoDB";
 import {injectable} from "inversify";
+import {ApiRequestsInfoClass} from "../Types/Types";
 
 @injectable()
 export class ApiRequestInfoRepository {
 
-    async addApiRequestInfo (ip: string | undefined, URL: string, date: Date): Promise<any> {
-        await apiRequestInfoCollection.insertOne({ IP: ip, URL: URL, date: date });
+    async addApiRequestsInfo (ip: string | undefined, URL: string, date: Date): Promise<void> {
+        const newApiRequestsInfo: ApiRequestsInfoClass = new ApiRequestsInfoClass(ip, URL, date);
+        await apiRequestsInfoModel.insertOne(newApiRequestsInfo);
         return
     }
 
-    async findApiRequestInfo (ip: string | undefined, URL: string): Promise<any> {
-        const requests = await apiRequestInfoCollection.find({IP: ip, URL: URL}).toArray()
+    async findApiRequestsInfo (ip: string | undefined, URL: string): Promise<Date[]> {
+        const requests = await apiRequestsInfoModel.find({IP: ip, URL: URL}).lean()
         return requests.map(array => {
             return array.date
         })
     }
 
-    async deleteApiRequestInfo (ip: string | undefined, URL: string, date: Date): Promise<any> {
-        await apiRequestInfoCollection.deleteOne({IP: ip, URL: URL, date: date})
+    async deleteApiRequestsInfo (ip: string | undefined, URL: string, date: Date): Promise<void> {
+        await apiRequestsInfoModel.deleteOne({IP: ip, URL: URL, date: date})
+        return
     }
 }

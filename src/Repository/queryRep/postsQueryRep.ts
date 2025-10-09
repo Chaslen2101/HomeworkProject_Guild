@@ -1,21 +1,21 @@
-import {inputQueryType} from "../../Types/Types";
+import {blogsPostsQueryType, inputQueryType, postsPagesType, PostsClass} from "../../Types/Types";
 import {queryHelper} from "../../Features/globalFeatures/helper";
-import {postCollection} from "../../db/MongoDB";
+import {postsModel} from "../../db/MongoDB";
 import {injectable} from "inversify";
 
 
 @injectable()
 export class PostsQueryRep {
 
-    async findManyPosts (query:inputQueryType, id?: string) {
-        const sanitizedQuery = queryHelper.blogsPostsQuery(query)
-        const filter = query.blogId ? {blogId: query.blogId} : id ? {blogId: id} : {}
-        const result = await postCollection.find(filter, {projection: {_id: 0}})
-            .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
+    async findManyPosts (query:inputQueryType, id?: string): Promise<postsPagesType> {
+        const sanitizedQuery: blogsPostsQueryType = queryHelper.blogsPostsQuery(query)
+        const filter: {blogId:string} | string | {} = query.blogId ? {blogId: query.blogId} : id ? {blogId: id} : {}
+        const result = await postsModel.find(filter, {projection: {_id: 0}})
+            .sort({[sanitizedQuery.sortBy]: sanitizedQuery.sortDirection})
             .limit(sanitizedQuery.pageSize)
             .skip((sanitizedQuery.pageNumber-1)*sanitizedQuery.pageSize)
-            .toArray()
-        const totalCount = await postCollection.countDocuments(filter)
+            .lean()
+        const totalCount = await postsModel.countDocuments(filter)
         return {
             pagesCount: Math.ceil(totalCount/sanitizedQuery.pageSize),
             page: sanitizedQuery.pageNumber,
@@ -25,7 +25,7 @@ export class PostsQueryRep {
         }
     }
 
-    async findPostById(id: string) {
-        return await postCollection.findOne({id: id}, {projection: {_id: 0}})
+    async findPostById(id: string): Promise<PostsClass | null> {
+        return await postsModel.findOne({id: id}, {projection: {_id: 0}})
     }
 }

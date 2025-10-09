@@ -98,7 +98,7 @@ export class AuthController {
 
     async refreshToken(req: Request, res: Response) {
 
-        const result = await this.authService.refreshToken(req.cookies.refreshToken, req.refreshTokenInfo)
+        const result = await this.authService.updateRefreshToken(req.cookies.refreshToken, req.refreshTokenInfo)
         if (result) {
             res
                 .status(httpStatuses.OK_200)

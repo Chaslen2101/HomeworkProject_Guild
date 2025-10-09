@@ -1,6 +1,6 @@
 import {SessionsQueryRep} from "../Repository/queryRep/sessionsQueryRep";
 import {SessionsRepository} from "../Repository/sessionsRepository";
-import {refreshTokenInfoType} from "../Types/Types";
+import {refreshTokenPayload} from "../Types/Types";
 import {inject, injectable} from "inversify";
 
 
@@ -12,12 +12,12 @@ export class SessionsService {
         @inject(SessionsQueryRep) protected sessionsQueryRep: SessionsQueryRep
         ) {}
 
-    async getAllSessions(refreshToken: refreshTokenInfoType) {
+    async getAllSessions(refreshToken: refreshTokenPayload) {
 
         return await this.sessionsQueryRep.getAllSessions(refreshToken.id)
     }
 
-    async deleteAllSessions(refreshToken: refreshTokenInfoType) {
+    async deleteAllSessions(refreshToken: refreshTokenPayload) {
 
         await this.sessionsRepository.deleteAllDeviceSessions(refreshToken.id, refreshToken.deviceId)
         return

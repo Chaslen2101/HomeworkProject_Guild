@@ -1,7 +1,7 @@
 import {jwtService} from "../Features/globalFeatures/jwtService";
 import {hashHelper} from "../Features/globalFeatures/helper";
-import {inputUserType, refreshTokenInfoType} from "../Types/Types";
-import {randomUUID} from "node:crypto";
+import {inputUserType, refreshTokenPayload} from "../Types/Types";
+import {randomUUID, UUID} from "node:crypto";
 import {UsersRepository} from "../Repository/usersRepository";
 import {emailManager} from "../Managers/emailManager";
 import {UsersQueryRep} from "../Repository/queryRep/usersQueryRep";
@@ -25,7 +25,7 @@ export class AuthService {
 
         const isPasswordCorrect = await hashHelper.comparePassword(neededUser.password, password)
         if (isPasswordCorrect) {
-            const deviceId = randomUUID()
+            const deviceId: string = randomUUID().toString()
             await this.sessionsRepository.addNewDeviceSession(deviceId, neededUser.id, ip, deviceName)
             return {
                 accessToken : await jwtService.createAccessToken(neededUser),
@@ -38,7 +38,7 @@ export class AuthService {
     async registration(userData: inputUserType) {
 
         const subject: string = "Verify your email address"
-        const confirmationCode = randomUUID()
+        const confirmationCode: string = randomUUID().toString()
         await this.usersRepository.createUser(userData, confirmationCode)
         return await emailManager.sendConfirmCode(userData.email, confirmationCode,subject)
 
@@ -53,7 +53,7 @@ export class AuthService {
         if(compareDesc(new Date(),user.emailConfirmationInfo.expirationDate) === -1) {
             throw new Error ("Your confirmation code expired")
         }
-        if(user.emailConfirmationInfo.isConfirmed === true) {
+        if(user.emailConfirmationInfo.isConfirmed) {
             throw new Error ("Your email already confirmed")
         }
         return await this.usersRepository.confirmEmail(user.id)
@@ -66,23 +66,23 @@ export class AuthService {
         if(!user){
             return false
         }
-        const code = randomUUID()
+        const code: string = randomUUID().toString()
         await this.usersRepository.changeEmailConfirmCode(code, user.id)
         return await emailManager.sendConfirmCode(email, code,subject)
     }
 
-    async refreshToken (refreshToken: string, refreshTokenInfo: refreshTokenInfoType) {
+    async updateRefreshToken (refreshToken: string, refreshTokenInfo: refreshTokenPayload) {
 
         await this.tokenBlackListRepository.addNewTokenToBlackList(refreshToken)
-
         await this.sessionsRepository.updateDeviceSession(refreshTokenInfo.deviceId, refreshTokenInfo.id)
-        return {
-            accessToken: await jwtService.createAccessToken(refreshTokenInfo),
-            refreshToken: await jwtService.createRefreshToken(refreshTokenInfo)
-        }
-    }
 
-    async logout (refreshToken: any, refreshTokenInfo: refreshTokenInfoType) {
+            return {
+                accessToken: await jwtService.createAccessToken(refreshTokenInfo),
+                refreshToken: await jwtService.createRefreshToken(refreshTokenInfo)
+            }
+        }
+
+    async logout (refreshToken: any, refreshTokenInfo: refreshTokenPayload) {
 
         await this.tokenBlackListRepository.addNewTokenToBlackList(refreshToken)
         await this.sessionsRepository.deleteOneDeviceSession(refreshTokenInfo.id, refreshTokenInfo.deviceId)
@@ -93,7 +93,7 @@ export class AuthService {
     async sendPasswordRecoveryCode (email: string) {
 
         const subject: string = "To recover your password"
-        const code = randomUUID()
+        const code: string = randomUUID().toString()
         const isEmailSent = await emailManager.sendConfirmCode(email,code,subject)
         if(!isEmailSent) {
             throw new Error ("Cannot send email, manager problems")

@@ -1,6 +1,6 @@
 import {SortDirection, WithId} from "mongodb";
 import bcrypt from "bcrypt"
-import {commentViewType, ExistUserType, inputQueryType, userViewType} from "../../Types/Types";
+import {commentViewType, UserClass, inputQueryType, userViewType} from "../../Types/Types";
 
 export const queryHelper = {
 
@@ -75,7 +75,7 @@ export const mapToView = {
         }
     },
 
-    mapUsers (users: WithId<ExistUserType>[]) {
+    mapUsers (users: UserClass[]) {
         return users.map(user => {
             return new userViewType(
                 user.id,

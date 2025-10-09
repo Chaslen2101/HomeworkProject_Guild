@@ -1,5 +1,5 @@
-import {commentContentType, existCommentType, userViewType} from "../Types/Types";
-import {commentCollection} from "../db/MongoDB";
+import {CommentsClass, userViewType} from "../Types/Types";
+import {commentsModel} from "../db/MongoDB";
 import {ObjectId} from "mongodb";
 import {injectable} from "inversify";
 
@@ -7,8 +7,8 @@ import {injectable} from "inversify";
 @injectable()
 export class CommentsRepository {
 
-    async create (comment:commentContentType, userInfo: userViewType, postId: string) {
-        const newComment: existCommentType = new existCommentType(
+    async create (comment:CommentsClass, userInfo: userViewType, postId: string): Promise<string> {
+        const newComment: CommentsClass = new CommentsClass(
             new ObjectId().toString(),
             comment.content,
             {
@@ -19,16 +19,20 @@ export class CommentsRepository {
             postId
         )
 
-        await commentCollection.insertOne(newComment)
+        await commentsModel.insertOne(newComment)
         return newComment.id
     }
 
-    async update(comment:commentContentType, id: string) {
-        return await commentCollection.updateOne({id: id}, {$set: {content: comment.content}})
+    async updateComment(comment:CommentsClass, id: string): Promise<void> {
+
+        const result = await commentsModel.updateOne({id: id}, {$set: {content: comment.content}})
+        return
     }
 
-    async delete(id: string){
-        return commentCollection.deleteOne({id: id})
+    async deleteComment(id: string): Promise<void> {
+
+        const result = await commentsModel.deleteOne({id: id})
+        return
     }
 }
 

@@ -1,16 +1,16 @@
 import {NextFunction, Request, Response} from "express";
 import {httpStatuses} from "../../settings";
 import {differenceInMilliseconds, max, min} from "date-fns";
-import {apiRequestInfoRepository} from "../../composition-root";
+import {apiRequestsInfoRepository} from "../../composition-root";
 
 
 export const requestInfoCollector = async (req: Request, res: Response, next: NextFunction) => {
 
     const date = new Date();
-    console.log(req.originalUrl)
-    await apiRequestInfoRepository.addApiRequestInfo(req.ip, req.originalUrl, date)
 
-    const numberOfRequests = await apiRequestInfoRepository.findApiRequestInfo(req.ip, req.originalUrl)
+    await apiRequestsInfoRepository.addApiRequestsInfo(req.ip, req.originalUrl, date)
+
+    const numberOfRequests: Date[] = await apiRequestsInfoRepository.findApiRequestsInfo(req.ip, req.originalUrl)
 
     console.log("numberOfRequests: ", numberOfRequests)
 
@@ -26,7 +26,7 @@ export const requestInfoCollector = async (req: Request, res: Response, next: Ne
         console.log("newPatch")
 
         if (difference >= 10000) {
-            await apiRequestInfoRepository.deleteApiRequestInfo(req.ip, req.originalUrl, earliestRequest)
+            await apiRequestsInfoRepository.deleteApiRequestsInfo(req.ip, req.originalUrl, earliestRequest)
             next()
         }else {
             res

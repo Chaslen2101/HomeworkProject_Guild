@@ -1,5 +1,5 @@
-import {userCollection} from "../../db/MongoDB";
-import {ExistUserType, userQueryType, userViewType} from "../../Types/Types";
+import {usersModel} from "../../db/MongoDB";
+import {usersPagesType, UserClass, userQueryType, userViewType} from "../../Types/Types";
 import {mapToView} from "../../Features/globalFeatures/helper";
 import {WithId} from "mongodb";
 import {injectable} from "inversify";
@@ -8,17 +8,17 @@ import {injectable} from "inversify";
 @injectable()
 export class UsersQueryRep {
 
-    async findUserByLoginOrEmail (loginOrEmail: string) {
+    async findUserByLoginOrEmail (loginOrEmail: string): Promise<UserClass | null> {
 
-        return await userCollection.findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]}, {projection: {_id: 0}});
+        return await usersModel.findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]}, {projection: {_id: 0}});
     }
 
-    async findUserById (id: string) {
+    async findUserById (id: string): Promise<userViewType | null> {
 
-        return mapToView.mapUser(await userCollection.findOne({id: id,},{projection: {_id: 0}}))
+        return mapToView.mapUser(await usersModel.findOne({id: id,},{projection: {_id: 0}}))
     }
 
-    async findManyUsersByLoginOrEmail (sanitizedQuery: userQueryType) {
+    async findManyUsersByLoginOrEmail (sanitizedQuery: userQueryType): Promise<usersPagesType | null> {
 
         let filter = {}
         if (sanitizedQuery.searchLoginTerm && sanitizedQuery.searchEmailTerm) {
@@ -29,12 +29,12 @@ export class UsersQueryRep {
             filter = {login:{$regex: sanitizedQuery.searchLoginTerm, $options:"i"}}
         }
 
-        const items = await userCollection.find(filter,{projection: {_id: 0}})
-            .sort(sanitizedQuery.sortBy, sanitizedQuery.sortDirection)
+        const items: UserClass[] = await usersModel.find(filter,{projection: {_id: 0}})
+            .sort({[sanitizedQuery.sortBy]: sanitizedQuery.sortDirection})
             .limit(sanitizedQuery.pageSize)
             .skip((sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize)
-            .toArray() as WithId<ExistUserType>[]
-        const totalCount = await userCollection.countDocuments(filter)
+            .lean() as WithId<UserClass>[]
+        const totalCount: number = await usersModel.countDocuments(filter)
         const users: userViewType[] = mapToView.mapUsers(items)
         return {
             pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
@@ -45,14 +45,14 @@ export class UsersQueryRep {
         }
     }
 
-    async findUserByEmailConfirmCode (code: string) {
+    async findUserByEmailConfirmCode (code: string): Promise<UserClass | null> {
 
-        return userCollection.findOne({"emailConfirmationInfo.confirmationCode": code},{projection:{_id:0}})
+        return usersModel.findOne({"emailConfirmationInfo.confirmationCode": code},{projection:{_id:0}})
     }
 
-    async findUserByPasswordRecoveryCode (code: string) {
+    async findUserByPasswordRecoveryCode (code: string): Promise<UserClass | null> {
 
-        return userCollection.findOne({"passwordRecoveryCode.confirmationCode": code},{projection:{_id:0}})
+        return usersModel.findOne({"passwordRecoveryCode.confirmationCode": code},{projection:{_id:0}})
     }
 }
 

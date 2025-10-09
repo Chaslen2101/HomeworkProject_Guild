@@ -1,4 +1,4 @@
-import {refreshTokenCollection} from "../db/MongoDB";
+import {refreshTokenModel} from "../db/MongoDB";
 import {injectable} from "inversify";
 
 
@@ -6,12 +6,12 @@ import {injectable} from "inversify";
 export class TokenBlackListRepository {
 
     async addNewTokenToBlackList (token: any) {
-        await refreshTokenCollection.insertOne({tokenValue: token})
+        await refreshTokenModel.insertOne({tokenValue: token})
         return
     }
 
-    async checkTokenInBlackList (token: any) {
-        const result = await refreshTokenCollection.findOne({tokenValue: token})
+    async checkTokenInBlackList (token: any): Promise<boolean> {
+        const result = await refreshTokenModel.findOne({tokenValue: token})
         return !!result;
     }
 }

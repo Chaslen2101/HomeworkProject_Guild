@@ -1,5 +1,5 @@
-import {userCollection} from "../db/MongoDB";
-import {ExistUserType, inputUserType} from "../Types/Types";
+import {usersModel} from "../db/MongoDB";
+import {UserClass, inputUserType} from "../Types/Types";
 import {ObjectId} from "mongodb";
 import {hashHelper} from "../Features/globalFeatures/helper";
 import {UUID} from "node:crypto";
@@ -10,10 +10,10 @@ import {injectable} from "inversify";
 @injectable()
 export class UsersRepository {
 
-    async createUser (newUserData: inputUserType, confirmCode?: UUID) {
+    async createUser (newUserData: inputUserType, confirmCode?: string): Promise<string> {
 
         const hashedPassword = await hashHelper.hashNewPassword(newUserData.password)
-        const newUser: ExistUserType = new ExistUserType(
+        const newUser: UserClass = new UserClass(
             new ObjectId().toString(),
             newUserData.login,
             newUserData.email,
@@ -21,46 +21,46 @@ export class UsersRepository {
             new Date().toISOString(),
             {
                 confirmationCode: confirmCode ? confirmCode : null,
-                expirationDate: add(new Date(),{hours: 1}),
+                expirationDate: add(new Date(),{hours: 1}).toISOString(),
                 isConfirmed: false
             },
             {
                 confirmationCode: null,
-                expirationDate: new Date(),
+                expirationDate: new Date().toISOString(),
             }
         )
-        await userCollection.insertOne(newUser)
+        await usersModel.insertOne(newUser)
         return newUser.id
     }
 
-    async deleteUser (id: string) {
+    async deleteUser (id: string): Promise<boolean> {
 
-        const result = await userCollection.deleteOne({id: id})
+        const result = await usersModel.deleteOne({id: id})
         return result.deletedCount !== 0
     }
 
-    async confirmEmail (userId:string) {
+    async confirmEmail (userId:string): Promise<boolean> {
 
-        const result = await userCollection.updateOne(
+        const result = await usersModel.updateOne(
             {id: userId},
             {$set:{"emailConfirmationInfo.isConfirmed": true}}
         )
         return result.modifiedCount === 1
     }
 
-    async changeEmailConfirmCode (code: string, userId: string) {
+    async changeEmailConfirmCode (code: string, userId: string): Promise<boolean> {
 
-        const result = await userCollection.updateOne(
+        const result = await usersModel.updateOne(
             {id: userId},
             {$set:{"emailConfirmationInfo.confirmationCode": code}}
         )
         return result.modifiedCount === 1
     }
 
-    async changePasswordConfirmCode (code: string, userId: string) {
+    async changePasswordConfirmCode (code: string, userId: string): Promise<boolean> {
 
-        const expirationDate: Date = add(new Date(),{hours: 1})
-        const result = await userCollection.updateOne(
+        const expirationDate: string = add(new Date(),{hours: 1}).toISOString()
+        const result = await usersModel.updateOne(
             {id: userId},
             {$set:
                         {"passwordRecoveryCode.confirmationCode": code,
@@ -70,9 +70,9 @@ export class UsersRepository {
         return result.modifiedCount === 1
     }
 
-    async changePassword (newPassword: string, userId: string) {
+    async changePassword (newPassword: string, userId: string): Promise<boolean> {
 
-        const result = await userCollection.updateOne(
+        const result = await usersModel.updateOne(
             {id: userId},
             {$set:{password:newPassword}}
         )
