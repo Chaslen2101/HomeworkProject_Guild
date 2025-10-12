@@ -53,7 +53,7 @@ export class CommentsController {
         let userId: string = isTokenPassed ? isTokenPassed.id : ""
 
         const sanitizedQuery: CommentQueryType = queryHelper.commentsQuery(req.query as InputQueryType)
-        const notMappedComments: CommentPagesType = await this.commentsQueryRep.findManyCommentsByPostId(req.params.postId, sanitizedQuery, userId)
+        const notMappedComments: CommentPagesType = await this.commentsQueryRep.findManyCommentsByPostId(req.params.postId, sanitizedQuery)
         const mappedComments: CommentsViewClass[] = mapToView.mapComments(notMappedComments.items, userId)
         const commentsToView = {
             ...notMappedComments.items,
