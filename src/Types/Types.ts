@@ -111,7 +111,7 @@ export class UserClass {
             isConfirmed: boolean
         },
         public passwordRecoveryCode: {
-            confirmationCode: null,
+            confirmationCode: string,
             expirationDate: Date
         }
     ) {}
@@ -130,7 +130,7 @@ export const UserSchema:Schema<UserClass> = new mongoose.Schema({
         isConfirmed: Boolean
     },
     passwordRecoveryCode: {
-        confirmationCode: null,
+        confirmationCode: String,
         expirationDate: Schema.Types.Date
     }
 

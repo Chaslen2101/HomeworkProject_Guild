@@ -24,7 +24,7 @@ export class UsersRepository {
                 isConfirmed: false
             },
             {
-                confirmationCode: null,
+                confirmationCode: "",
                 expirationDate: new Date(),
             }
         )
