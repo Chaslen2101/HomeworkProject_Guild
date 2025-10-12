@@ -1,7 +1,7 @@
 import {SortDirection} from "mongodb";
 import mongoose, {Schema} from "mongoose";
 
-export type inputQueryType = {
+export type InputQueryType = {
     [key: string]: string | undefined
 }
 
@@ -11,21 +11,21 @@ export class BlogsClass {
         public name: string,
         public description: string,
         public websiteUrl: string,
-        public createdAt: string,
+        public createdAt: Date,
         public isMembership: boolean
     ) {}
 }
 
-export const blogsSchema: Schema<BlogsClass> = new mongoose.Schema({
+export const BlogsSchema: Schema<BlogsClass> = new mongoose.Schema({
     id: String,
     name: String,
     description: String,
     websiteUrl: String,
-    createdAt: String,
+    createdAt: Schema.Types.Date,
     isMembership: Boolean
 })
 
-export type blogsPagesType = {
+export type BlogsPagesType = {
     pagesCount: number,
     page: number,
     pageSize: number,
@@ -33,13 +33,13 @@ export type blogsPagesType = {
     items: BlogsClass[]
 }
 
-export type blogsInputType = {
+export type BlogsInputType = {
     name: string
     description: string
     websiteUrl: string
 }
 
-export type blogsPostsQueryType = {
+export type BlogsPostsQueryType = {
     pageNumber: number,
     pageSize: number,
     sortBy: string,
@@ -59,24 +59,24 @@ export class PostsClass {
     ) {}
 }
 
-export const postsSchema: Schema<PostsClass> = new mongoose.Schema ({
+export const PostsSchema: Schema<PostsClass> = new mongoose.Schema ({
         id: String,
         title: String,
         shortDescription: String,
         content: String,
         blogId: String,
         blogName: String,
-        createdAt: Date
+        createdAt: Schema.Types.Date
 })
 
-export type postsInputType = {
+export type PostsInputType = {
     title: string
     shortDescription: string
     content: string
     blogId: string
 }
 
-export type postsPagesType = {
+export type PostsPagesType = {
     pagesCount: number,
     page: number,
     pageSize: number,
@@ -84,18 +84,18 @@ export type postsPagesType = {
     items: PostsClass[]
 }
 
-export type inputUserType = {
+export type InputUserType = {
     login: string,
     password: string,
     email: string
 }
 
-export type usersPagesType = {
+export type UsersPagesType = {
     pagesCount: number,
     page: number,
     pageSize: number,
     totalCount: number,
-    items: userViewType[]
+    items: UserViewType[]
 }
 
 export class UserClass {
@@ -104,49 +104,49 @@ export class UserClass {
         public login: string,
         public email:string,
         public password: string,
-        public createdAt: string,
+        public createdAt: Date,
         public emailConfirmationInfo: {
             confirmationCode: string | null,
-            expirationDate: string,
+            expirationDate: Date,
             isConfirmed: boolean
         },
         public passwordRecoveryCode: {
             confirmationCode: null,
-            expirationDate: string
+            expirationDate: Date
         }
     ) {}
 }
 
 
-export const userSchema:Schema<UserClass> = new mongoose.Schema({
+export const UserSchema:Schema<UserClass> = new mongoose.Schema({
     id: String,
     login: String,
     email: String,
     password: String,
-    createdAt: String,
+    createdAt: Schema.Types.Date,
     emailConfirmationInfo: {
         confirmationCode: String,
-        expirationDate: String,
+        expirationDate: Schema.Types.Date,
         isConfirmed: Boolean
     },
     passwordRecoveryCode: {
         confirmationCode: null,
-        expirationDate: String
+        expirationDate: Schema.Types.Date
     }
 
 })
 
-export class userViewType {
+export class UserViewType {
     constructor(
         public id: string,
         public login: string,
         public email: string,
-        public createdAt: string
+        public createdAt: Date
     ) {
     }
 }
 
-export type userQueryType = {
+export type UserQueryType = {
     pageNumber: number,
     pageSize: number,
     sortBy: string,
@@ -155,24 +155,24 @@ export type userQueryType = {
     searchEmailTerm: string | null
 }
 
-export type accessTokenPayload = {
+export type AccessTokenPayload = {
     id: string,
     login: string
 }
 
-export type refreshTokenPayload = {
+export type RefreshTokenPayload = {
     deviceId: string,
     id: string,
     login: string
 }
 
-export const refreshTokenPayloadSchema: Schema<refreshTokenPayload> = new mongoose.Schema({
+export const RefreshTokenPayloadSchema: Schema<RefreshTokenPayload> = new mongoose.Schema({
     deviceId: String,
     id: String,
     login: String
 })
 
-export type commentatorInfoType = {
+export type CommentatorInfoType = {
     userId: string,
     userLogin: string
 }
@@ -181,33 +181,55 @@ export class CommentsClass {
     constructor(
         public id: string,
         public content: string,
-        public commentatorInfo: commentatorInfoType,
-        public createdAt: string,
+        public commentatorInfo: CommentatorInfoType,
+        public createdAt: Date,
         public postId: string,
+        public likesInfo: {
+            likedBy: string[],
+            dislikedBy: string[]
+        }
     ) {}
 }
 
-export const commentsScheme: Schema<CommentsClass> = new mongoose.Schema ({
+export const CommentsScheme: Schema<CommentsClass> = new mongoose.Schema ({
     id: String,
     content: String,
     commentatorInfo: {
         userId: String,
         userLogin: String
     },
-    createdAt: String,
+    createdAt: Schema.Types.Date,
     postId: String,
+    likesInfo: {
+        likedBy: [String],
+        dislikedBy: [String]
+    }
 })
 
-export class commentViewType {
+export class CommentsViewClass {
     constructor(
         public id: string,
         public content: string,
-        public commentatorInfo: commentatorInfoType,
-        public createdAt: string
+        public commentatorInfo: CommentatorInfoType,
+        public createdAt: Date,
+        public likesInfo: {
+            likesCount: number,
+            dislikesCount: number,
+            myStatus: string
+        }
+
     ) {}
 }
 
-export type commentQueryType = {
+export type CommentPagesType = {
+    pagesCount: number,
+    page: number,
+    pageSize: number,
+    totalCount: number,
+    items: CommentsClass[]
+}
+
+export type CommentQueryType = {
     pageNumber: number,
     pageSize: number,
     sortBy: string,
@@ -224,15 +246,15 @@ export class SessionInfoClass {
     ) {}
 }
 
-export const sessionInfoSchema: Schema<SessionInfoClass> = new mongoose.Schema ({
+export const SessionInfoSchema: Schema<SessionInfoClass> = new mongoose.Schema ({
     ip: String,
     title: String,
-    lastActiveDate: Date,
+    lastActiveDate: Schema.Types.Date,
     deviceId: String,
     userId: String,
 })
 
-export type sessionInfoViewType = {
+export type SessionInfoViewType = {
     ip: string | undefined,
     title: string | undefined,
     lastActiveDate: Date,
@@ -247,8 +269,8 @@ export class ApiRequestsInfoClass {
     ) {}
 }
 
-export const apiRequestsInfoSchema: Schema<ApiRequestsInfoClass> = new mongoose.Schema({
+export const ApiRequestsInfoSchema: Schema<ApiRequestsInfoClass> = new mongoose.Schema({
     ip: String,
     URL: String,
-    date: Date
+    date: Schema.Types.Date,
 })

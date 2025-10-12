@@ -1,4 +1,4 @@
-import {inputUserType} from "../Types/Types";
+import {InputUserType} from "../Types/Types";
 import {UsersRepository} from "../Repository/usersRepository";
 import {inject, injectable} from "inversify";
 
@@ -10,7 +10,7 @@ export class UsersService {
         @inject(UsersRepository) protected usersRepository: UsersRepository
     ) {}
 
-    async createUser (newUserData: inputUserType) {
+    async createUser (newUserData: InputUserType) {
         return await this.usersRepository.createUser(newUserData)
     }
 

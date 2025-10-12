@@ -1,5 +1,5 @@
 import {usersModel} from "../../db/MongoDB";
-import {usersPagesType, UserClass, userQueryType, userViewType} from "../../Types/Types";
+import {UsersPagesType, UserClass, UserQueryType, UserViewType} from "../../Types/Types";
 import {mapToView} from "../../Features/globalFeatures/helper";
 import {WithId} from "mongodb";
 import {injectable} from "inversify";
@@ -13,12 +13,12 @@ export class UsersQueryRep {
         return await usersModel.findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]}, {projection: {_id: 0}});
     }
 
-    async findUserById (id: string): Promise<userViewType | null> {
+    async findUserById (id: string): Promise<UserViewType | null> {
 
         return mapToView.mapUser(await usersModel.findOne({id: id,},{projection: {_id: 0}}))
     }
 
-    async findManyUsersByLoginOrEmail (sanitizedQuery: userQueryType): Promise<usersPagesType | null> {
+    async findManyUsersByLoginOrEmail (sanitizedQuery: UserQueryType): Promise<UsersPagesType | null> {
 
         let filter = {}
         if (sanitizedQuery.searchLoginTerm && sanitizedQuery.searchEmailTerm) {
@@ -35,7 +35,7 @@ export class UsersQueryRep {
             .skip((sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize)
             .lean() as WithId<UserClass>[]
         const totalCount: number = await usersModel.countDocuments(filter)
-        const users: userViewType[] = mapToView.mapUsers(items)
+        const users: UserViewType[] = mapToView.mapUsers(items)
         return {
             pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
             page: sanitizedQuery.pageNumber,

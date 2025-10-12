@@ -2,7 +2,7 @@ import {Request, Response} from "express";
 import {httpStatuses} from "../settings";
 import {PostsQueryRep} from "../Repository/queryRep/postsQueryRep";
 import {BlogsQueryRep} from "../Repository/queryRep/blogsQueryRep";
-import {inputQueryType} from "../Types/Types";
+import {InputQueryType} from "../Types/Types";
 import {PostsService} from "../Services/postsServices";
 import {inject} from "inversify";
 
@@ -18,7 +18,7 @@ export class PostsController {
     async returnAllPosts (req: Request, res: Response){
         res
             .status(httpStatuses.OK_200)
-            .json(await this.postsQueryRep.findManyPosts(req.query as inputQueryType))
+            .json(await this.postsQueryRep.findManyPosts(req.query as InputQueryType))
     }
 
     async inputPost (req: Request, res: Response) {

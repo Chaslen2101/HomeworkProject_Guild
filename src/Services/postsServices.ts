@@ -1,5 +1,5 @@
 import {PostsRepository} from "../Repository/postsRepository";
-import {postsInputType} from "../Types/Types";
+import {PostsInputType} from "../Types/Types";
 import {inject, injectable} from "inversify";
 
 
@@ -10,11 +10,11 @@ export class PostsService {
         @inject(PostsRepository) protected postsRepository: PostsRepository
     ) {}
 
-    async createPost (body: postsInputType, neededBlog: any) {
+    async createPost (body: PostsInputType, neededBlog: any) {
         return await this.postsRepository.create(body, neededBlog)
     }
 
-    async updatePost(id: string, body: postsInputType) {
+    async updatePost(id: string, body: PostsInputType) {
         return await this.postsRepository.update(id, body)
     }
 

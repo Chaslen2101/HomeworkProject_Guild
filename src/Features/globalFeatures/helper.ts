@@ -1,10 +1,10 @@
-import {SortDirection, WithId} from "mongodb";
+import {SortDirection} from "mongodb";
 import bcrypt from "bcrypt"
-import {commentViewType, UserClass, inputQueryType, userViewType} from "../../Types/Types";
+import {CommentsViewClass, UserClass, InputQueryType, UserViewType, CommentsClass} from "../../Types/Types";
 
 export const queryHelper = {
 
-    blogsPostsQuery (query: { [key: string]: string | undefined }) {
+    blogsPostsQuery(query: { [key: string]: string | undefined }) {
         return {
             pageNumber: query.pageNumber ? +query.pageNumber : 1,
             pageSize: query.pageSize !== undefined ? +query.pageSize : 10,
@@ -14,7 +14,7 @@ export const queryHelper = {
         }
     },
 
-    userQuery (query: inputQueryType) {
+    userQuery(query: InputQueryType) {
         return {
             pageNumber: query.pageNumber ? +query.pageNumber : 1,
             pageSize: query.pageSize !== undefined ? +query.pageSize : 10,
@@ -25,7 +25,7 @@ export const queryHelper = {
         }
     },
 
-    commentsQuery (query: inputQueryType) {
+    commentsQuery(query: InputQueryType) {
         return {
             pageNumber: query.pageNumber ? +query.pageNumber : 1,
             pageSize: query.pageSize ? +query.pageSize : 10,
@@ -37,33 +37,45 @@ export const queryHelper = {
 
 export const hashHelper = {
 
-    async hashNewPassword (password: string) {
+    async hashNewPassword(password: string) {
         const salt = await bcrypt.genSalt(10)
         return await bcrypt.hash(password, salt)
     },
 
-    async comparePassword (hashedPassword: string, somePassword: string) {
+    async comparePassword(hashedPassword: string, somePassword: string) {
         return await bcrypt.compare(somePassword, hashedPassword)
     }
 }
 
 export const mapToView = {
 
-    mapComments (comments: any[]) {
+    mapComments(comments: CommentsClass[], userId: string): CommentsViewClass[] {
         return comments.map(comment => {
-            return new commentViewType(
+            let status:string = "None"
+            if (comment.likesInfo.likedBy.includes(userId)) {
+                status = "Like"
+            }
+            if (comment.likesInfo.dislikedBy.includes(userId)) {
+                status = "Dislike"
+            }
+            return new CommentsViewClass(
                 comment.id,
                 comment.content,
                 {
                     userId: comment.commentatorInfo.userId,
                     userLogin: comment.commentatorInfo.userLogin
                 },
-                comment.createdAt
+                comment.createdAt,
+                {
+                    likesCount: comment.likesInfo.likedBy.length,
+                    dislikesCount: comment.likesInfo.dislikedBy.length,
+                    myStatus: status
+                }
             )
         })
     },
 
-    mapComment (comment: any) {
+    mapComment(comment: any) {
         return {
             id: comment.id,
             content: comment.content,
@@ -75,20 +87,20 @@ export const mapToView = {
         }
     },
 
-    mapUsers (users: UserClass[]) {
+    mapUsers(users: UserClass[]) {
         return users.map(user => {
-            return new userViewType(
+            return new UserViewType(
                 user.id,
                 user.login,
                 user.email,
                 user.createdAt
-                )
+            )
         })
     },
 
-    mapUser (userData: any): userViewType {
+    mapUser(userData: any): UserViewType {
 
-        return new userViewType(
+        return new UserViewType(
             userData.id,
             userData.login,
             userData.email,

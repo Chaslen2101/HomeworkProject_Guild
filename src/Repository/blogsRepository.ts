@@ -1,4 +1,4 @@
-import {blogsInputType, BlogsClass} from "../Types/Types";
+import {BlogsInputType, BlogsClass} from "../Types/Types";
 import {blogsModel} from "../db/MongoDB";
 import {DeleteResult, ObjectId, UpdateResult} from "mongodb";
 import {injectable} from "inversify";
@@ -7,14 +7,14 @@ import {injectable} from "inversify";
 @injectable()
 export class BlogsRepository {
 
-    async create(newBlog: blogsInputType): Promise<string> {
+    async create(newBlog: BlogsInputType): Promise<string> {
 
         const createdBlog: BlogsClass = new BlogsClass(
             new ObjectId().toString(),
             newBlog.name,
             newBlog.description,
             newBlog.websiteUrl,
-            new Date().toISOString(),
+            new Date(),
             false
         )
         await blogsModel.insertOne(createdBlog)
@@ -26,7 +26,7 @@ export class BlogsRepository {
         return result.deletedCount !== 0
     }
 
-    async update(id: string, newInfo: blogsInputType): Promise<boolean> {
+    async update(id: string, newInfo: BlogsInputType): Promise<boolean> {
         const result: UpdateResult = await blogsModel.updateOne(
             {id: id},
             {$set: {

@@ -1,4 +1,4 @@
-import {postsInputType, PostsClass} from "../Types/Types";
+import {PostsInputType, PostsClass} from "../Types/Types";
 import {postsModel} from "../db/MongoDB";
 import {ObjectId} from "mongodb";
 import {injectable} from "inversify";
@@ -7,7 +7,7 @@ import {injectable} from "inversify";
 @injectable()
 export class PostsRepository {
 
-    async create(inputData: postsInputType, blog: any): Promise<string> {
+    async create(inputData: PostsInputType, blog: any): Promise<string> {
 
         const newPost: PostsClass = new PostsClass(
             new ObjectId().toString(),
@@ -23,7 +23,8 @@ export class PostsRepository {
         return newPost.id
     }
 
-    async update(id: string, newInfo: postsInputType): Promise<boolean> {
+    async update(id: string, newInfo: PostsInputType): Promise<boolean> {
+
         const result = await postsModel.updateOne(
             {id: id},
             {$set: {
@@ -37,6 +38,7 @@ export class PostsRepository {
     }
 
     async delete(id: string): Promise<boolean> {
+
         const result = await postsModel.deleteOne({id: id})
         return result.deletedCount !== 0
     }

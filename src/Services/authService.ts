@@ -1,7 +1,7 @@
 import {jwtService} from "../Features/globalFeatures/jwtService";
 import {hashHelper} from "../Features/globalFeatures/helper";
-import {inputUserType, refreshTokenPayload} from "../Types/Types";
-import {randomUUID, UUID} from "node:crypto";
+import {InputUserType, RefreshTokenPayload} from "../Types/Types";
+import {randomUUID} from "node:crypto";
 import {UsersRepository} from "../Repository/usersRepository";
 import {emailManager} from "../Managers/emailManager";
 import {UsersQueryRep} from "../Repository/queryRep/usersQueryRep";
@@ -35,7 +35,7 @@ export class AuthService {
         } else return false
     }
 
-    async registration(userData: inputUserType) {
+    async registration(userData: InputUserType) {
 
         const subject: string = "Verify your email address"
         const confirmationCode: string = randomUUID().toString()
@@ -71,7 +71,7 @@ export class AuthService {
         return await emailManager.sendConfirmCode(email, code,subject)
     }
 
-    async updateRefreshToken (refreshToken: string, refreshTokenInfo: refreshTokenPayload) {
+    async updateRefreshToken (refreshToken: string, refreshTokenInfo: RefreshTokenPayload) {
 
         await this.tokenBlackListRepository.addNewTokenToBlackList(refreshToken)
         await this.sessionsRepository.updateDeviceSession(refreshTokenInfo.deviceId, refreshTokenInfo.id)
@@ -82,7 +82,7 @@ export class AuthService {
             }
         }
 
-    async logout (refreshToken: any, refreshTokenInfo: refreshTokenPayload) {
+    async logout (refreshToken: any, refreshTokenInfo: RefreshTokenPayload) {
 
         await this.tokenBlackListRepository.addNewTokenToBlackList(refreshToken)
         await this.sessionsRepository.deleteOneDeviceSession(refreshTokenInfo.id, refreshTokenInfo.deviceId)

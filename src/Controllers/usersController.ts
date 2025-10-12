@@ -1,5 +1,5 @@
 import {Request, Response} from "express"
-import {inputQueryType, inputUserType, userQueryType} from "../Types/Types";
+import {InputQueryType, InputUserType, UserQueryType} from "../Types/Types";
 import {UsersQueryRep} from "../Repository/queryRep/usersQueryRep";
 import {httpStatuses} from "../settings";
 import {queryHelper} from "../Features/globalFeatures/helper";
@@ -14,7 +14,7 @@ export class UsersController {
         @inject(UsersService) protected usersService: UsersService
     ) {}
 
-    async createUser (req: Request<{}, {}, inputUserType>, res: Response)  {
+    async createUser (req: Request<{}, {}, InputUserType>, res: Response)  {
 
         const newUserId = await this.usersService.createUser(req.body)
         const newUser = await this.usersQueryRep.findUserById(newUserId)
@@ -25,7 +25,7 @@ export class UsersController {
 
     async getManyUsers (req: Request, res: Response) {
 
-        const sanitizedQuery: userQueryType = queryHelper.userQuery(req.query as inputQueryType)
+        const sanitizedQuery: UserQueryType = queryHelper.userQuery(req.query as InputQueryType)
         res
             .status(httpStatuses.OK_200)
             .json(await this.usersQueryRep.findManyUsersByLoginOrEmail(sanitizedQuery))

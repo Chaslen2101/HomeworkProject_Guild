@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import {httpStatuses} from "../settings";
 import {BlogsQueryRep} from "../Repository/queryRep/blogsQueryRep";
-import {inputQueryType} from "../Types/Types";
+import {InputQueryType} from "../Types/Types";
 import {PostsQueryRep} from "../Repository/queryRep/postsQueryRep";
 import {BlogService} from "../Services/blogsServices";
 import {PostsService} from "../Services/postsServices";
@@ -77,7 +77,7 @@ export class BlogsController {
         } else {
             res
                 .status(httpStatuses.OK_200)
-                .json(await this.postsQueryRep.findManyPosts(req.query as inputQueryType, req.params.blogId))
+                .json(await this.postsQueryRep.findManyPosts(req.query as InputQueryType, req.params.blogId))
         }
     }
 

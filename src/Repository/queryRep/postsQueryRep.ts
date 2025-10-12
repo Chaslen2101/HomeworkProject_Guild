@@ -1,4 +1,4 @@
-import {blogsPostsQueryType, inputQueryType, postsPagesType, PostsClass} from "../../Types/Types";
+import {BlogsPostsQueryType, InputQueryType, PostsPagesType, PostsClass} from "../../Types/Types";
 import {queryHelper} from "../../Features/globalFeatures/helper";
 import {postsModel} from "../../db/MongoDB";
 import {injectable} from "inversify";
@@ -7,8 +7,8 @@ import {injectable} from "inversify";
 @injectable()
 export class PostsQueryRep {
 
-    async findManyPosts (query:inputQueryType, id?: string): Promise<postsPagesType> {
-        const sanitizedQuery: blogsPostsQueryType = queryHelper.blogsPostsQuery(query)
+    async findManyPosts (query:InputQueryType, id?: string): Promise<PostsPagesType> {
+        const sanitizedQuery: BlogsPostsQueryType = queryHelper.blogsPostsQuery(query)
         const filter: {blogId:string} | string | {} = query.blogId ? {blogId: query.blogId} : id ? {blogId: id} : {}
         const result = await postsModel.find(filter, {projection: {_id: 0}})
             .sort({[sanitizedQuery.sortBy]: sanitizedQuery.sortDirection})

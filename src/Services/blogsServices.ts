@@ -1,4 +1,4 @@
-import {blogsInputType} from "../Types/Types";
+import {BlogsInputType} from "../Types/Types";
 import {BlogsRepository} from "../Repository/blogsRepository";
 import {inject, injectable} from "inversify";
 
@@ -10,11 +10,11 @@ export class BlogService {
         @inject(BlogsRepository) protected blogsRepository: BlogsRepository
     ) {}
 
-    async createBlog (body: blogsInputType) {
+    async createBlog (body: BlogsInputType) {
         return await this.blogsRepository.create(body)
     }
 
-    async updateBlog (id: string, body: blogsInputType) {
+    async updateBlog (id: string, body: BlogsInputType) {
         return await this.blogsRepository.update(id, body)
     }
 

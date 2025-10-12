@@ -1,8 +1,7 @@
 import {usersModel} from "../db/MongoDB";
-import {UserClass, inputUserType} from "../Types/Types";
+import {UserClass, InputUserType} from "../Types/Types";
 import {ObjectId} from "mongodb";
 import {hashHelper} from "../Features/globalFeatures/helper";
-import {UUID} from "node:crypto";
 import {add} from "date-fns"
 import {injectable} from "inversify";
 
@@ -10,7 +9,7 @@ import {injectable} from "inversify";
 @injectable()
 export class UsersRepository {
 
-    async createUser (newUserData: inputUserType, confirmCode?: string): Promise<string> {
+    async createUser (newUserData: InputUserType, confirmCode?: string): Promise<string> {
 
         const hashedPassword = await hashHelper.hashNewPassword(newUserData.password)
         const newUser: UserClass = new UserClass(
@@ -18,15 +17,15 @@ export class UsersRepository {
             newUserData.login,
             newUserData.email,
             hashedPassword,
-            new Date().toISOString(),
+            new Date(),
             {
                 confirmationCode: confirmCode ? confirmCode : null,
-                expirationDate: add(new Date(),{hours: 1}).toISOString(),
+                expirationDate: add(new Date(),{hours: 1}),
                 isConfirmed: false
             },
             {
                 confirmationCode: null,
-                expirationDate: new Date().toISOString(),
+                expirationDate: new Date(),
             }
         )
         await usersModel.insertOne(newUser)

@@ -1,12 +1,12 @@
 import {sessionsModel} from "../../db/MongoDB";
 import {injectable} from "inversify";
-import {SessionInfoClass, sessionInfoViewType} from "../../Types/Types";
+import {SessionInfoClass, SessionInfoViewType} from "../../Types/Types";
 
 
 @injectable()
 export class SessionsQueryRep {
 
-    async getAllSessions(userId: string): Promise<sessionInfoViewType[]> {
+    async getAllSessions(userId: string): Promise<SessionInfoViewType[]> {
 
         const allSessions = await sessionsModel.find({userId: userId},{projection:{_id: 0}}).lean();
 
