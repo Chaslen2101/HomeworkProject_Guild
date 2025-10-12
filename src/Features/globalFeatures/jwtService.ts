@@ -7,7 +7,7 @@ import {randomUUID, UUID} from "node:crypto";
 export const jwtService = {
 
     async createAccessToken(user: AccessTokenPayload): Promise<string> {
-        return jwt.sign({id: user.id, login: user.login}, SETTINGS.SECRET_ACCESS_TOKEN_KEY, {expiresIn: "10s"})
+        return jwt.sign({id: user.id, login: user.login}, SETTINGS.SECRET_ACCESS_TOKEN_KEY, {expiresIn: "10m"})
     },
 
     async verifyAccessToken(token: string): Promise<AccessTokenPayload | null> {
@@ -22,7 +22,7 @@ export const jwtService = {
     async createRefreshToken(user: RefreshTokenPayload, someDeviceId?: string): Promise<string> {
 
         const deviceId = someDeviceId ? someDeviceId : user.deviceId
-        return jwt.sign({deviceId: deviceId, id: user.id, login: user.login, UUID: randomUUID()}, SETTINGS.SECRET_REFRESH_TOKEN_KEY, {expiresIn: "20s"})
+        return jwt.sign({deviceId: deviceId, id: user.id, login: user.login, UUID: randomUUID()}, SETTINGS.SECRET_REFRESH_TOKEN_KEY, {expiresIn: "30m"})
     },
 
     async verifyRefreshToken(token: string): Promise<RefreshTokenPayload | null> {
