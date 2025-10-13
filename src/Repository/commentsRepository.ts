@@ -6,13 +6,13 @@ import {injectable} from "inversify";
 @injectable()
 export class CommentsRepository {
 
-    async createComment (comment:CommentsClass): Promise<CommentsClass> {
+    async createComment(comment: CommentsClass): Promise<CommentsClass> {
 
         await commentsModel.insertOne(comment)
         return comment
     }
 
-    async updateComment(comment:string, id: string): Promise<boolean> {
+    async updateComment(comment: string, id: string): Promise<boolean> {
 
         const result = await commentsModel.updateOne({id: id}, {$set: {content: comment}})
         return result.modifiedCount === 1
@@ -30,11 +30,11 @@ export class CommentsRepository {
         if (likeStatus === "Like") {
             updateValue = {$addToSet: {"likesInfo.likedBy": userId}}
         }
-        if(likeStatus === "Dislike") {
+        if (likeStatus === "Dislike") {
             updateValue = {$addToSet: {"likesInfo.dislikedBy": userId}}
         }
-        if(likeStatus === "None") {
-            updateValue = {$pull: {"likesInfo.likesInfo.likedBy": userId,"likesInfo.dislikedBy":userId}}
+        if (likeStatus === "None") {
+            updateValue = {$pull: {"likesInfo.likesInfo.likedBy": userId, "likesInfo.dislikedBy": userId}}
         }
         const result = await commentsModel.updateOne({id: commentId}, updateValue)
         return result.modifiedCount === 1

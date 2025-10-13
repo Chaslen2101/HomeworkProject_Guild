@@ -1,4 +1,4 @@
-import {PostsInputType, PostsClass} from "../Types/Types";
+import {PostsInputType, PostsClass, BlogsClass} from "../Types/Types";
 import {postsModel} from "../db/MongoDB";
 import {ObjectId} from "mongodb";
 import {injectable} from "inversify";
@@ -7,7 +7,7 @@ import {injectable} from "inversify";
 @injectable()
 export class PostsRepository {
 
-    async create(inputData: PostsInputType, blog: any): Promise<string> {
+    async create(inputData: PostsInputType, blog: BlogsClass): Promise<string> {
 
         const newPost: PostsClass = new PostsClass(
             new ObjectId().toString(),

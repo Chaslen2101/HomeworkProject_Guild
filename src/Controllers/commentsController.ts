@@ -10,7 +10,7 @@ import {
     CommentQueryType,
     CommentsClass,
     CommentsViewClass,
-    InputQueryType
+    InputQueryType, PostsClass
 } from "../Types/Types";
 import {inject} from "inversify";
 import {jwtService} from "../Features/globalFeatures/jwtService";
@@ -26,14 +26,14 @@ export class CommentsController {
 
     async createCommentForPost (req: Request, res: Response) {
 
-        const isPostExists = await this.postsQueryRep.findPostById(req.params.postId)
+        const isPostExists: PostsClass | null = await this.postsQueryRep.findPostById(req.params.postId)
         if (!isPostExists) {
             res
                 .status(httpStatuses.NOT_FOUND_404)
                 .json({})
-            return
         }
-        const newComment: CommentsViewClass = await this.commentsService.createComment(req.body, req.user, req.params.postId)
+
+        const newComment: CommentsViewClass = await this.commentsService.createComment(req.body.content, req.user, req.params.postId)
         res
             .status(httpStatuses.CREATED_201)
             .json(newComment)

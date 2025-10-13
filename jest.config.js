@@ -5,5 +5,4 @@ module.exports = {
     "^.+.tsx?$": ["ts-jest",{}],
   },
   preset: 'ts-jest',
-  testRegex: "__tests__/.*.e2e.test.ts$"
 };

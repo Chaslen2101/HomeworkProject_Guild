@@ -53,7 +53,7 @@ import {ApiRequestInfoRepository} from "./Repository/apiRequestInfoRepository";
 // export const blogsController = new BlogsController(blogsQueryRep,postsQueryRep,blogsService,postsService)
 // export const authController = new AuthController(usersQueryRep,authService)
 
-const container = new Container();
+export const container = new Container();
 
 container.bind(UsersValidator).to(UsersValidator)
 container.bind(AuthorizationCheck).to(AuthorizationCheck)
