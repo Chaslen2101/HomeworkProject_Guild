@@ -28,10 +28,11 @@ export class CommentsRepository {
 
         let updateValue = {}
         if (likeStatus === "Like") {
-            updateValue = {$addToSet: {"likesInfo.likedBy": userId}}
+            updateValue = {$addToSet: {"likesInfo.likedBy": userId},
+            $pull: {"likesInfo.dislikedBy": userId}}
         }
         if (likeStatus === "Dislike") {
-            updateValue = {$addToSet: {"likesInfo.dislikedBy": userId}}
+            updateValue = {$addToSet: {"likesInfo.dislikedBy": userId}, $pull: {"likesInfo.likedBy": userId}}
         }
         if (likeStatus === "None") {
             updateValue = {$pull: {"likesInfo.likesInfo.likedBy": userId, "likesInfo.dislikedBy": userId}}

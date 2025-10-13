@@ -1,5 +1,5 @@
 import {commentsModel} from "../../db/MongoDB";
-import {CommentPagesType, CommentQueryType, CommentsClass} from "../../Types/Types";
+import {CommentsPagesType, CommentsQueryType, CommentsClass} from "../../Types/Types";
 import {injectable} from "inversify";
 
 
@@ -16,7 +16,7 @@ export class CommentsQueryRep {
         }
     }
 
-    async findManyCommentsByPostId (postId: string, query: CommentQueryType): Promise<CommentPagesType> {
+    async findManyCommentsByPostId (postId: string, query: CommentsQueryType): Promise<CommentsPagesType<CommentsClass[]>> {
 
         const items = await commentsModel.find({postId: postId}, {projection:{_id: 0}})
             .sort({[query.sortBy]: query.sortDirection})

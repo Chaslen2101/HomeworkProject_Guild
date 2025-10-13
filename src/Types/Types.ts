@@ -221,15 +221,15 @@ export class CommentsViewClass {
     ) {}
 }
 
-export type CommentPagesType = {
+export type CommentsPagesType<T> = {
     pagesCount: number,
     page: number,
     pageSize: number,
     totalCount: number,
-    items: CommentsClass[]
+    items: T
 }
 
-export type CommentQueryType = {
+export type CommentsQueryType = {
     pageNumber: number,
     pageSize: number,
     sortBy: string,

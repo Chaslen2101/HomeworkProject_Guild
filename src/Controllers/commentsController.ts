@@ -6,8 +6,8 @@ import {CommentsQueryRep} from "../Repository/queryRep/commentsQueryRep";
 import {mapToView, queryHelper} from "../Features/globalFeatures/helper";
 import {
     AccessTokenPayload,
-    CommentPagesType,
-    CommentQueryType,
+    CommentsPagesType,
+    CommentsQueryType,
     CommentsClass,
     CommentsViewClass,
     InputQueryType, PostsClass
@@ -52,11 +52,11 @@ export class CommentsController {
         const isTokenPassed: AccessTokenPayload | null = req.headers.authorization ? await jwtService.verifyAccessToken(req.headers.authorization.split(' ')[1]) : null
         let userId: string = isTokenPassed ? isTokenPassed.id : ""
 
-        const sanitizedQuery: CommentQueryType = queryHelper.commentsQuery(req.query as InputQueryType)
-        const notMappedComments: CommentPagesType = await this.commentsQueryRep.findManyCommentsByPostId(req.params.postId, sanitizedQuery)
-        const mappedComments: CommentsViewClass[] = mapToView.mapComments(notMappedComments.items, userId)
-        const commentsToView = {
-            ...notMappedComments.items,
+        const sanitizedQuery: CommentsQueryType = queryHelper.commentsQuery(req.query as InputQueryType)
+        const notMappedCommentsPages: CommentsPagesType<CommentsClass[]> = await this.commentsQueryRep.findManyCommentsByPostId(req.params.postId, sanitizedQuery)
+        const mappedComments: CommentsViewClass[] = mapToView.mapComments(notMappedCommentsPages.items, userId)
+        const commentsToView: CommentsPagesType<CommentsViewClass[]> = {
+            ...notMappedCommentsPages,
             items: mappedComments
             }
 
