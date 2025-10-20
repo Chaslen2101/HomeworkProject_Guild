@@ -12,14 +12,14 @@
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "express": "5.0.0",
     "express-validator": "^7.2.0",
     "inversify": "^7.10.2",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.8.0",
     "mongodb-memory-server": "^10.2.3",
     "mongoose": "^8.19.1",
-    "nodemailer": "^6.9.15",
+    "nodemailer": "7.0.7",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
@@ -40,7 +40,7 @@
     "watch": "tsc -w",
     "dev": "yarn nodemon --inspect dist/index.js",
     "test": "jest --config jest.config.js",
-    "test_watch": "jest --config jest.config.js --watch",
+    "test_watch": "jest --config jest.config.js --watch --detectOpenHandles",
     "jest:coverage": "jest -i --coverage"
   }
 }

@@ -1,6 +1,6 @@
 import {Router} from "express"
-import {inputErrorCheckValidator} from "../Features/globalFeatures/inputCheckErrorValidator";
-import {inputBlogsValidation} from "../Features/validators/blogsValidator";
+import {inputErrorCheckValidator} from "../Infrastructure/Features/GlobalFeatures/inputCheckErrorValidator";
+import {inputBlogsValidation} from "../Infrastructure/Features/Validators/blogsValidator";
 import {authorizationCheck, blogsController, postsValidator} from "../composition-root";
 
 

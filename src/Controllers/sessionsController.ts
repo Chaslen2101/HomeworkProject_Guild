@@ -1,8 +1,9 @@
 import {Request, Response} from "express";
-import {SessionsService} from "../Services/sessionsService";
+import {SessionsService} from "../Application/Services/sessionsService";
 import {httpStatuses} from "../settings";
-import {SessionsQueryRep} from "../Repository/queryRep/sessionsQueryRep";
+import {SessionsQueryRep} from "../Infrastructure/QueryRep/sessionsQueryRep";
 import {inject} from "inversify";
+import {SessionsInfoViewType} from "../Types/Types";
 
 
 export class SessionsController {
@@ -14,7 +15,7 @@ export class SessionsController {
 
     async getActiveSessions (req: Request, res: Response){
 
-        const result = await this.sessionsService.getAllSessions(req.refreshTokenInfo)
+        const result: SessionsInfoViewType[] = await this.sessionsQueryRep.getAllSessions(req.refreshTokenInfo)
 
         res
             .status(httpStatuses.OK_200)
@@ -32,32 +33,31 @@ export class SessionsController {
 
     async deleteSession (req: Request, res: Response){
 
-        const session = await this.sessionsQueryRep.findSession(req.params.deviceId)
+        try {
 
-        if (!session) {
-            res
-                .status(httpStatuses.NOT_FOUND_404)
-                .json({})
-
-            return
-
-        } else if (session.userId !== req.refreshTokenInfo.id) {
-
-            res
-                .status(httpStatuses.FORBIDDEN_403)
-                .json({})
-
-            return
-
-        } else {
-
-            await this.sessionsService.deleteOneSession(session.userId, req.params.deviceId)
+            await this.sessionsService.deleteOneSession(req.params.deviceId,req.refreshTokenInfo.id)
 
             res
                 .status(httpStatuses.NO_CONTENT_204)
                 .json({})
 
-            return
+        } catch(e) {
+
+
+            if (e instanceof Error) {
+                if (e.message === "Cant find needed session") {
+                    res
+                        .status(httpStatuses.NOT_FOUND_404)
+                        .json({})
+                }
+
+                if (e.message === "Cant delete foreign session") {
+                    res
+                        .status(httpStatuses.FORBIDDEN_403)
+                        .json({})
+                }
+            }
+
         }
     }
 }

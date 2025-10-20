@@ -1,36 +1,47 @@
 import {SortDirection} from "mongodb";
-import mongoose, {Schema} from "mongoose";
+import mongoose, {HydratedDocument, Model, Schema} from "mongoose";
 
 export type InputQueryType = {
     [key: string]: string | undefined
 }
 
-export class BlogsClass {
-    constructor(
-        public id: string,
-        public name: string,
-        public description: string,
-        public websiteUrl: string,
-        public createdAt: Date,
-        public isMembership: boolean
-    ) {}
+export type BlogsDBType = {
+        id: string,
+        name: string,
+        description: string,
+        websiteUrl: string,
+        createdAt: Date,
+        isMembership: boolean
+        posts: string[]
 }
 
-export const BlogsSchema: Schema<BlogsClass> = new mongoose.Schema({
-    id: String,
-    name: String,
-    description: String,
-    websiteUrl: String,
-    createdAt: Schema.Types.Date,
-    isMembership: Boolean
-})
+export type BlogsViewType = {
+    id: string,
+    name: string,
+    description: string,
+    websiteUrl: string,
+    createdAt: Date,
+    isMembership: boolean
+}
+
+export type BlogsInstanceType = HydratedDocument<BlogsDBType,BlogsInstanceMethodsType>
+
+export type BlogsInstanceMethodsType = {
+    updateBlogData(this: BlogsInstanceType, newBlogData: BlogsInputType): boolean
+    createPostForBlog(this: BlogsInstanceType, newPostData: PostsInputType): PostsInstanceType
+    deletePost(this: BlogsInstanceType, postId: string): boolean
+}
+
+export type BlogsModelType = Model<BlogsDBType,{},BlogsInstanceMethodsType> & {
+    createBlog(newBlogData: BlogsInputType): BlogsInstanceType
+}
 
 export type BlogsPagesType = {
     pagesCount: number,
     page: number,
     pageSize: number,
     totalCount: number,
-    items: BlogsClass[]
+    items: BlogsViewType[]
 }
 
 export type BlogsInputType = {
@@ -47,27 +58,56 @@ export type BlogsPostsQueryType = {
     searchNameTerm: string | undefined,
 }
 
-export class PostsClass {
-    constructor(
-        public id: string,
-        public title: string,
-        public shortDescription: string,
-        public content: string,
-        public blogId: string,
-        public blogName: string,
-        public createdAt: Date
-    ) {}
+export type PostsDBType = {
+    id: string,
+    title: string,
+    shortDescription: string,
+    content: string,
+    blogId: string,
+    blogName: string,
+    createdAt: Date,
+    comments: string[]
+    likesInfo: {
+        likedBy: string[],
+        dislikedBy: string[]
+        newestLikes: {
+            addedAt: Date,
+            userId: string,
+            login: string
+        }[]
+    }
 }
 
-export const PostsSchema: Schema<PostsClass> = new mongoose.Schema ({
-        id: String,
-        title: String,
-        shortDescription: String,
-        content: String,
-        blogId: String,
-        blogName: String,
-        createdAt: Schema.Types.Date
-})
+export type PostsViewType = {
+    id: string,
+    title: string,
+    shortDescription: string,
+    content: string,
+    blogId: string,
+    blogName: string,
+    createdAt: Date
+    extendedLikesInfo: {
+        likesCount: number,
+        dislikesCount: number,
+        myStatus: string,
+        newestLikes: {
+            addedAt: Date,
+            userId: string,
+            login: string
+        }[]
+    }
+}
+
+export type PostsInstanceType = HydratedDocument<PostsDBType, PostsInstanceMethodsType>;
+
+export type PostsInstanceMethodsType = {
+    updatePost(this: PostsInstanceType, newData: PostsInputType): true
+    createComment(this: PostsInstanceType, content: string, userInfo: UserViewType): CommentsInstanceType
+    deleteComment(this: PostsInstanceType, commentId: string): true
+    updateLikeStatus(this: PostsInstanceType, userInfo: AccessTokenPayloadType, likeStatus: string): boolean
+}
+
+export type PostsModelType = Model<PostsDBType, {}, PostsInstanceMethodsType> & {}
 
 export type PostsInputType = {
     title: string
@@ -81,10 +121,10 @@ export type PostsPagesType = {
     page: number,
     pageSize: number,
     totalCount: number,
-    items: PostsClass[]
+    items: PostsViewType[]
 }
 
-export type InputUserType = {
+export type UserInputType = {
     login: string,
     password: string,
     email: string
@@ -98,52 +138,36 @@ export type UsersPagesType = {
     items: UserViewType[]
 }
 
-export class UserClass {
-    constructor(
-        public id: string,
-        public login: string,
-        public email:string,
-        public password: string,
-        public createdAt: Date,
-        public emailConfirmationInfo: {
-            confirmationCode: string | null,
-            expirationDate: Date,
-            isConfirmed: boolean
-        },
-        public passwordRecoveryCode: {
-            confirmationCode: string,
-            expirationDate: Date
-        }
-    ) {}
-}
-
-
-export const UserSchema:Schema<UserClass> = new mongoose.Schema({
-    id: String,
-    login: String,
-    email: String,
-    password: String,
-    createdAt: Schema.Types.Date,
+export type UserDBType = {
+    id: string,
+    login: string,
+    email: string,
+    password: string,
+    createdAt: Date,
     emailConfirmationInfo: {
-        confirmationCode: String,
-        expirationDate: Schema.Types.Date,
-        isConfirmed: Boolean
+        confirmationCode: string | null,
+        expirationDate: Date | null,
+        isConfirmed: boolean
     },
     passwordRecoveryCode: {
-        confirmationCode: String,
-        expirationDate: Schema.Types.Date
+        confirmationCode: string | null,
+        expirationDate: Date | null
     }
+}
 
-})
+export type UserViewType = {
+    id: string,
+    login: string,
+    email: string,
+    createdAt: Date
+}
 
-export class UserViewType {
-    constructor(
-        public id: string,
-        public login: string,
-        public email: string,
-        public createdAt: Date
-    ) {
-    }
+export type UserInstanceMethodsType = {}
+
+export type UserInstanceType = HydratedDocument<UserDBType, UserInstanceMethodsType>
+
+export type UserModelType = Model<UserDBType, {}, UserInstanceMethodsType> & {
+    createNewUser(userData: UserInputType, password: string, confirmCode?: string): UserInstanceType
 }
 
 export type UserQueryType = {
@@ -155,7 +179,7 @@ export type UserQueryType = {
     searchEmailTerm: string | null
 }
 
-export type AccessTokenPayload = {
+export type AccessTokenPayloadType = {
     id: string,
     login: string
 }
@@ -177,56 +201,45 @@ export type CommentatorInfoType = {
     userLogin: string
 }
 
-export class CommentsClass {
-    constructor(
-        public id: string,
-        public content: string,
-        public commentatorInfo: CommentatorInfoType,
-        public createdAt: Date,
-        public postId: string,
-        public likesInfo: {
-            likedBy: string[],
-            dislikedBy: string[]
-        }
-    ) {}
-}
-
-export const CommentsScheme: Schema<CommentsClass> = new mongoose.Schema ({
-    id: String,
-    content: String,
-    commentatorInfo: {
-        userId: String,
-        userLogin: String
-    },
-    createdAt: Schema.Types.Date,
-    postId: String,
+export type CommentsDBType = {
+    id: string,
+    content: string,
+    commentatorInfo: CommentatorInfoType,
+    createdAt: Date,
+    postId: string,
     likesInfo: {
-        likedBy: [String],
-        dislikedBy: [String]
+        likedBy: string[],
+        dislikedBy: string[]
     }
-})
-
-export class CommentsViewClass {
-    constructor(
-        public id: string,
-        public content: string,
-        public commentatorInfo: CommentatorInfoType,
-        public createdAt: Date,
-        public likesInfo: {
-            likesCount: number,
-            dislikesCount: number,
-            myStatus: string
-        }
-
-    ) {}
 }
 
-export type CommentsPagesType<T> = {
+export type CommentsViewType = {
+    id: string,
+    content: string,
+    commentatorInfo: CommentatorInfoType,
+    createdAt: Date,
+    likesInfo: {
+        likesCount: number,
+        dislikesCount: number,
+        myStatus: string
+    }
+}
+
+export type CommentsInstanceMethodsType = {
+    updateCommentContent(newContent: string): boolean
+    updateLikeStatus(this: CommentsInstanceType, likeStatus: string, userId: string): boolean
+}
+
+export type CommentsModelType = Model<CommentsDBType,{},CommentsInstanceMethodsType> & {}
+
+export type CommentsInstanceType = HydratedDocument<CommentsDBType,CommentsInstanceMethodsType>
+
+export type CommentsPagesType = {
     pagesCount: number,
     page: number,
     pageSize: number,
     totalCount: number,
-    items: T
+    items: CommentsViewType[]
 }
 
 export type CommentsQueryType = {
@@ -236,29 +249,27 @@ export type CommentsQueryType = {
     sortDirection: SortDirection
 }
 
-export class SessionInfoClass {
-    constructor(
-        public ip: string | undefined,
-        public title: string | undefined,
-        public lastActiveDate: Date,
-        public deviceId: string,
-        public userId: string,
-    ) {}
+export type SessionsInfoDBType = {
+    ip: string | undefined
+    title: string | undefined
+    lastActiveDate: Date
+    deviceId: string
+    userId: string
 }
 
-export const SessionInfoSchema: Schema<SessionInfoClass> = new mongoose.Schema ({
-    ip: String,
-    title: String,
-    lastActiveDate: Schema.Types.Date,
-    deviceId: String,
-    userId: String,
-})
-
-export type SessionInfoViewType = {
+export type SessionsInfoViewType = {
     ip: string | undefined,
     title: string | undefined,
     lastActiveDate: Date,
     deviceId: string,
+}
+
+export type SessionsInfoInstanceMethodsType = {}
+
+export type SessionsInfoInstanceType = HydratedDocument<SessionsInfoDBType, SessionsInfoInstanceMethodsType>
+
+export type SessionsInfoModelType = Model<SessionsInfoDBType, {}, SessionsInfoInstanceMethodsType> & {
+    createNewSession(deviceId: string, userId: string, ip: string | undefined, deviceName: string | undefined): SessionsInfoInstanceType
 }
 
 export class ApiRequestsInfoClass {
@@ -266,7 +277,8 @@ export class ApiRequestsInfoClass {
         public ip: string | undefined,
         public URL: string,
         public date: Date
-    ) {}
+    ) {
+    }
 }
 
 export const ApiRequestsInfoSchema: Schema<ApiRequestsInfoClass> = new mongoose.Schema({

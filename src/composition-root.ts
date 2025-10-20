@@ -1,31 +1,31 @@
-import {UsersRepository} from "./Repository/usersRepository";
-import {UsersService} from "./Services/usersServices";
-import {SessionsRepository} from "./Repository/sessionsRepository";
-import {SessionsService} from "./Services/sessionsService";
-import {SessionsQueryRep} from "./Repository/queryRep/sessionsQueryRep";
-import {UsersQueryRep} from "./Repository/queryRep/usersQueryRep";
-import {PostsRepository} from "./Repository/postsRepository";
-import {PostsService} from "./Services/postsServices";
-import {CommentsRepository} from "./Repository/commentsRepository";
-import {CommentsService} from "./Services/commentsService";
-import {BlogsRepository} from "./Repository/blogsRepository";
-import {BlogService} from "./Services/blogsServices";
-import {AuthService} from "./Services/authService";
-import {TokenBlackListRepository} from "./Repository/tokenBlackListRepository";
+import {UsersRepository} from "./Infrastructure/Repository/usersRepository";
+import {UsersService} from "./Application/Services/usersServices";
+import {SessionsRepository} from "./Infrastructure/Repository/sessionsRepository";
+import {SessionsService} from "./Application/Services/sessionsService";
+import {SessionsQueryRep} from "./Infrastructure/QueryRep/sessionsQueryRep";
+import {UsersQueryRep} from "./Infrastructure/QueryRep/usersQueryRep";
+import {PostsRepository} from "./Infrastructure/Repository/postsRepository";
+import {PostsService} from "./Application/Services/postsServices";
+import {CommentsRepository} from "./Infrastructure/Repository/commentsRepository";
+import {CommentsService} from "./Application/Services/commentsService";
+import {BlogsRepository} from "./Infrastructure/Repository/blogsRepository";
+import {BlogsService} from "./Application/Services/blogsServices";
+import {AuthService} from "./Application/Services/authService";
+import {TokenBlackListRepository} from "./Infrastructure/Repository/tokenBlackListRepository";
 import {UsersController} from "./Controllers/usersController";
 import {SessionsController} from "./Controllers/sessionsController";
-import {BlogsQueryRep} from "./Repository/queryRep/blogsQueryRep";
-import {PostsQueryRep} from "./Repository/queryRep/postsQueryRep";
+import {BlogsQueryRep} from "./Infrastructure/QueryRep/blogsQueryRep";
+import {PostsQueryRep} from "./Infrastructure/QueryRep/postsQueryRep";
 import {PostsController} from "./Controllers/postsController";
-import {CommentsQueryRep} from "./Repository/queryRep/commentsQueryRep";
+import {CommentsQueryRep} from "./Infrastructure/QueryRep/commentsQueryRep";
 import {CommentsController} from "./Controllers/commentsController";
 import {BlogsController} from "./Controllers/blogsController";
 import {AuthController} from "./Controllers/authController";
 import {Container} from "inversify";
-import {UsersValidator} from "./Features/validators/usersValidator";
-import {AuthorizationCheck} from "./Features/globalFeatures/authorizationCheck";
-import {PostsValidator} from "./Features/validators/postsValidator";
-import {ApiRequestInfoRepository} from "./Repository/apiRequestInfoRepository";
+import {UsersValidator} from "./Infrastructure/Features/Validators/usersValidator";
+import {AuthorizationCheck} from "./Infrastructure/Features/GlobalFeatures/authorizationCheck";
+import {PostsValidator} from "./Infrastructure/Features/Validators/postsValidator";
+import {ApiRequestInfoRepository} from "./Infrastructure/Repository/apiRequestInfoRepository";
 
 // export const usersRepository: UsersRepository = new UsersRepository()
 // export const usersQueryRep = new UsersQueryRep()
@@ -76,7 +76,7 @@ container.bind(UsersService).to(UsersService)
 container.bind(SessionsService).to(SessionsService)
 container.bind(PostsService).to(PostsService)
 container.bind(CommentsService).to(CommentsService)
-container.bind(BlogService).to(BlogService)
+container.bind(BlogsService).to(BlogsService)
 container.bind(AuthService).to(AuthService)
 
 container.bind(UsersController).to(UsersController)

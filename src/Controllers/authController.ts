@@ -1,7 +1,7 @@
 import {Request, Response} from "express"
-import {AuthService} from "../Services/authService";
+import {AuthService} from "../Application/Services/authService";
 import {httpStatuses} from "../settings";
-import {UsersQueryRep} from "../Repository/queryRep/usersQueryRep";
+import {UsersQueryRep} from "../Infrastructure/QueryRep/usersQueryRep";
 import {inject} from "inversify";
 
 

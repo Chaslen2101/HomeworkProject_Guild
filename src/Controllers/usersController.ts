@@ -1,9 +1,9 @@
 import {Request, Response} from "express"
-import {InputQueryType, InputUserType, UserQueryType} from "../Types/Types";
-import {UsersQueryRep} from "../Repository/queryRep/usersQueryRep";
+import {InputQueryType, UserInputType, UserQueryType, UserViewType} from "../Types/Types";
+import {UsersQueryRep} from "../Infrastructure/QueryRep/usersQueryRep";
 import {httpStatuses} from "../settings";
-import {queryHelper} from "../Features/globalFeatures/helper";
-import {UsersService} from "../Services/usersServices";
+import {queryHelper} from "../Infrastructure/Features/GlobalFeatures/helper";
+import {UsersService} from "../Application/Services/usersServices";
 import {inject} from "inversify";
 
 
@@ -14,10 +14,9 @@ export class UsersController {
         @inject(UsersService) protected usersService: UsersService
     ) {}
 
-    async createUser (req: Request<{}, {}, InputUserType>, res: Response)  {
-
-        const newUserId = await this.usersService.createUser(req.body)
-        const newUser = await this.usersQueryRep.findUserById(newUserId)
+    async createUser (req: Request<{}, {}, UserInputType>, res: Response)  {
+        const newUserId: string = await this.usersService.createUser(req.body)
+        const newUser: UserViewType | null = await this.usersQueryRep.findUserById(newUserId)
         res
             .status(httpStatuses.CREATED_201)
             .json(newUser)
@@ -33,14 +32,15 @@ export class UsersController {
 
     async deleteUser (req: Request, res: Response) {
 
-        const isDeleted = await this.usersService.deleteUser(req.params.id)
+        const isDeleted: boolean = await this.usersService.deleteUser(req.params.id)
         if (isDeleted) {
             res
                 .status(httpStatuses.NO_CONTENT_204)
                 .json({})
         } else {
             res
-                .status(httpStatuses.NOT_FOUND_404).json({})
+                .status(httpStatuses.NOT_FOUND_404)
+                .json({})
         }
     }
 }

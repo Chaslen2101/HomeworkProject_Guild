@@ -1,13 +1,13 @@
 import {Router} from "express";
-import {inputErrorCheckValidator} from "../Features/globalFeatures/inputCheckErrorValidator";
-import {commentInputValidator} from "../Features/validators/commentsValidator";
+import {inputErrorCheckValidator} from "../Infrastructure/Features/GlobalFeatures/inputCheckErrorValidator";
+import {commentInputValidator} from "../Infrastructure/Features/Validators/commentsValidator";
 import {authorizationCheck, commentsController, postsController, postsValidator} from "../composition-root";
 
 
 export const postsRouter = Router({})
 
 postsRouter.get("/", postsController.returnAllPosts.bind(postsController))
-postsRouter.post("/", authorizationCheck.base64AuthorizationCheck,postsValidator.inputPostsValidation(), inputErrorCheckValidator,postsController.inputPost.bind(postsController))
+postsRouter.post("/", authorizationCheck.base64AuthorizationCheck,postsValidator.inputPostsValidation(), inputErrorCheckValidator,postsController.createPost.bind(postsController))
 postsRouter.get("/:id", postsController.findPostById.bind(postsController))
 postsRouter.put("/:id", authorizationCheck.base64AuthorizationCheck, postsValidator.inputPostsValidation(), inputErrorCheckValidator,postsController.updatePostByID.bind(postsController))
 postsRouter.delete("/:id",authorizationCheck.base64AuthorizationCheck,postsController.deletePostById.bind(postsController))

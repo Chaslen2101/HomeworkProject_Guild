@@ -1,5 +1,5 @@
 import {Router} from "express";
-import {inputErrorCheckValidator} from "../Features/globalFeatures/inputCheckErrorValidator";
+import {inputErrorCheckValidator} from "../Infrastructure/Features/GlobalFeatures/inputCheckErrorValidator";
 import {authorizationCheck, usersController, usersValidator} from "../composition-root";
 
 export const usersRouter = Router()

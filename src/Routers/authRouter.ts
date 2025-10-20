@@ -1,8 +1,8 @@
 import {Router} from "express";
-import {inputErrorCheckValidator} from "../Features/globalFeatures/inputCheckErrorValidator";
-import {requestInfoCollector} from "../Features/globalFeatures/apiRequestInfo";
+import {inputErrorCheckValidator} from "../Infrastructure/Features/GlobalFeatures/inputCheckErrorValidator";
+import {requestInfoCollector} from "../Infrastructure/Features/GlobalFeatures/apiRequestInfo";
 import {authController, authorizationCheck, usersValidator} from "../composition-root";
-import {isEmailValidator, loginValidator, newPasswordRecoveryValidator} from "../Features/validators/authValidator";
+import {isEmailValidator, loginValidator, newPasswordRecoveryValidator} from "../Infrastructure/Features/Validators/authValidator";
 
 export const authRouter = Router()
 
