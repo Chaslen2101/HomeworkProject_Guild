@@ -101,7 +101,7 @@ export class BlogsController {
             const isTokenExist: AccessTokenPayloadType | null = req.headers.authorization ? await jwtService.verifyAccessToken(req.headers.authorization.split(" ")[1]) : null
             const userId: string = isTokenExist ? isTokenExist.id : ""
 
-            const postsOfBlog: PostsPagesType = await this.postsQueryRep.findManyPosts(req.query as InputQueryType, req.params.blogId, userId)
+            const postsOfBlog: PostsPagesType = await this.postsQueryRep.findManyPosts(req.query as InputQueryType, userId, req.params.blogId,)
             res
                 .status(httpStatuses.OK_200)
                 .json(postsOfBlog)

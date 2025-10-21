@@ -30,7 +30,7 @@ export class PostsController {
         const posts: PostsPagesType = await this.postsQueryRep.findManyPosts(req.query as InputQueryType, userId)
         res
             .status(httpStatuses.OK_200)
-            .json({posts})
+            .json(posts)
     }
 
     async createPost(req: Request, res: Response) {
