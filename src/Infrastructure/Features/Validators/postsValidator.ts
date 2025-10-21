@@ -46,4 +46,10 @@ export class PostsValidator {
                 .isLength({min: 1, max: 1000}).withMessage("content should be from 1 to 1000 symbols"),
         ]
     }
+
+    likeStatusValidation = () => {
+        return [
+            body("likeStatus").exists().withMessage("likeStatus is required").isIn(["Like", "Dislike", "None"]).withMessage("Invalid like Status"),
+        ]
+    }
 }

@@ -13,3 +13,4 @@ postsRouter.put("/:id", authorizationCheck.base64AuthorizationCheck, postsValida
 postsRouter.delete("/:id",authorizationCheck.base64AuthorizationCheck,postsController.deletePostById.bind(postsController))
 postsRouter.post("/:postId/comments", authorizationCheck.accessTokenCheck, commentInputValidator(), inputErrorCheckValidator, commentsController.createCommentForPost.bind(commentsController))
 postsRouter.get("/:postId/comments", commentsController.getCommentsForPost.bind(commentsController))
+postsRouter.put("/:postId/like-status", postsValidator.likeStatusValidation(), inputErrorCheckValidator, authorizationCheck.accessTokenCheck, postsController.updateLikeStatus.bind(postsController))
