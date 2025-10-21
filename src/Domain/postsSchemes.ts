@@ -24,6 +24,7 @@ export const PostsSchema: Schema<PostsDBType, PostsModelType, PostsInstanceMetho
             dislikedBy: {type: [String], default: []},
             newestLikes: {
                 type: [{
+                    _id: false,
                     addedAt: Schema.Types.Date,
                     userId: String,
                     login: String
