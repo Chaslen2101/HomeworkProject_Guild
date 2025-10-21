@@ -6,7 +6,7 @@ import {
     BlogsPagesType,
     BlogsViewType,
     InputQueryType,
-    PostsPagesType
+    PostsPagesType, PostsViewType
 } from "../Types/Types";
 import {PostsQueryRep} from "../Infrastructure/QueryRep/postsQueryRep";
 import {BlogsService} from "../Application/Services/blogsServices";
@@ -21,9 +21,10 @@ export class BlogsController {
         @inject(PostsQueryRep) protected postsQueryRep: PostsQueryRep,
         @inject(BlogsService) protected blogsService: BlogsService,
         @inject(PostsService) protected postsService: PostsService
-    ) {}
+    ) {
+    }
 
-    async returnAllBlogs (req: Request, res: Response){
+    async returnAllBlogs(req: Request, res: Response) {
 
         const allBlogs: BlogsPagesType = await this.blogsQueryRep.findManyBlogs(req.query as InputQueryType)
         res
@@ -31,7 +32,7 @@ export class BlogsController {
             .json(allBlogs)
     }
 
-    async createBlog (req: Request, res: Response){
+    async createBlog(req: Request, res: Response) {
 
         const createdBlogId: string = await this.blogsService.createBlog(req.body)
         const createdBlog: BlogsViewType | null = await this.blogsQueryRep.findBlogByID(createdBlogId)
@@ -41,7 +42,7 @@ export class BlogsController {
             .json(createdBlog)
     }
 
-    async findBlogById (req: Request, res: Response) {
+    async findBlogById(req: Request, res: Response) {
 
         const neededBlog: BlogsViewType | null = await this.blogsQueryRep.findBlogByID(req.params.id)
         if (neededBlog) {
@@ -55,7 +56,7 @@ export class BlogsController {
         }
     }
 
-    async updateBlogById (req: Request, res: Response) {
+    async updateBlogById(req: Request, res: Response) {
 
         try {
 
@@ -74,7 +75,7 @@ export class BlogsController {
         }
     }
 
-    async deleteBlogByID (req: Request, res: Response) {
+    async deleteBlogByID(req: Request, res: Response) {
 
         const isDeleted: boolean = await this.blogsService.deleteBlog(req.params.id)
         if (isDeleted) {
@@ -88,7 +89,7 @@ export class BlogsController {
         }
     }
 
-    async findPostsOfBlog (req: Request, res: Response) {
+    async findPostsOfBlog(req: Request, res: Response) {
 
         const neededBlog: BlogsViewType | null = await this.blogsQueryRep.findBlogByID(req.params.blogId)
         if (!neededBlog) {
@@ -107,21 +108,31 @@ export class BlogsController {
         }
     }
 
-    async createPostForBlog (req: Request, res: Response) {
+    async createPostForBlog(req: Request, res: Response) {
 
-        const neededBlog: BlogsViewType | null = await this.blogsQueryRep.findBlogByID(req.params.blogId)
-        if (neededBlog) {
+        const isTokenExist: AccessTokenPayloadType | null = req.headers.authorization ? await jwtService.verifyAccessToken(req.headers.authorization.split(" ")[1]) : null
+        const userId: string = isTokenExist ? isTokenExist.id : ""
 
-            const newPostId: string = await this.postsService.createPost(req.body)
-            await this.postsQueryRep.findPostById(newPostId, req.user.id)
+
+        try {
+
+            const newPostId: string = await this.postsService.createPost(req.body, req.params.blogId)
+            const createdPost: PostsViewType | null = await this.postsQueryRep.findPostById(newPostId, userId)
 
             res
                 .status(httpStatuses.CREATED_201)
-                .json()
-        } else {
-            res
-                .status(httpStatuses.NOT_FOUND_404)
-                .json({})
+                .json(createdPost)
+
+        } catch (e) {
+
+            if (e instanceof Error) {
+
+                if(e.message === "Cant find needed blog") {
+                    res
+                        .status(httpStatuses.NOT_FOUND_404)
+                        .json({})
+                }
+            }
         }
     }
 }

@@ -17,10 +17,12 @@ export class PostsService {
         @inject(BlogsRepository) protected blogsRepository: BlogsRepository
     ) {}
 
-    async createPost (newPostData: PostsInputType): Promise<string> {
+    async createPost (newPostData: PostsInputType, blogIdFromParams?: string): Promise<string> {
 
-        const neededBlog: BlogsInstanceType | null = await this.blogsRepository.findById(newPostData.blogId)
+        const neededBlogId: string = newPostData.blogId ? newPostData.blogId : blogIdFromParams ? blogIdFromParams : "";
+        const neededBlog: BlogsInstanceType | null = await this.blogsRepository.findById(neededBlogId)
         if (!neededBlog) {throw new Error("Cant find needed blog")}
+        newPostData.blogId = neededBlogId
         const newPost: PostsInstanceType = neededBlog.createPostForBlog(newPostData)
         await this.postsRepository.save(newPost)
         return newPost.id
