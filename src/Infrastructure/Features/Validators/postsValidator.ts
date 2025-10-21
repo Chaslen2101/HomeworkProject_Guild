@@ -1,6 +1,7 @@
 import {body} from "express-validator";
 import {BlogsQueryRep} from "../../QueryRep/blogsQueryRep";
 import {inject} from "inversify";
+import {BlogsViewType} from "../../../Types/Types";
 
 
 
@@ -24,7 +25,7 @@ export class PostsValidator {
             body("blogId").trim().exists().withMessage("blogId is required")
                 .isString().withMessage("blogId should be string")
                 .custom(async inputBlogId => {
-                    const neededBlog = await this.blogsQueryRep.findBlogByID(inputBlogId)
+                    const neededBlog: BlogsViewType | null = await this.blogsQueryRep.findBlogByID(inputBlogId)
                     if (!neededBlog)
                         throw new Error("there are no existing blogs with this ID")
                 })

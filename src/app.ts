@@ -19,7 +19,7 @@ app.use(cookieParser())
 app.get("/", (req: Request, res: Response) => {
     res
         .status(httpStatuses.OK_200)
-        .send("Current version: 12_03")
+        .send("Current version: 12_04")
 })
 app.use("/testing/all-data", deleteAllRouter)
 app.use("/blogs", blogRouter)

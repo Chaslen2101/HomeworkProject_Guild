@@ -27,7 +27,8 @@ export class AuthorizationCheck {
     }
 
     base64AuthorizationCheck = (req: Request, res: Response, next: NextFunction) => {
-        const auth = req.headers['authorization'] as string // 'Basic xxxx'
+
+        const auth: string = req.headers['authorization'] as string // 'Basic xxxx'
 
         if (!auth) {
             res
@@ -43,7 +44,7 @@ export class AuthorizationCheck {
         }
 
         // const decodedAuth = fromBase64ToUTF8(auth.slice(6))
-        const codedAuth = this.fromUTF8ToBase64(ADMIN_AUTH)
+        const codedAuth: string = this.fromUTF8ToBase64(ADMIN_AUTH)
 
         // if (decodedAuth !== SETTINGS.ADMIN) {
         if (auth.slice(6) !== codedAuth) {

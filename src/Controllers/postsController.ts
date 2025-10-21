@@ -36,11 +36,14 @@ export class PostsController {
     async createPost(req: Request, res: Response) {
 
         try {
+            const isTokenExist: AccessTokenPayloadType | null = req.headers.authorization ? await jwtService.verifyAccessToken(req.headers.authorization.split(" ")[1]) : null
+            const userId: string = isTokenExist ? isTokenExist.id : ""
 
             const createdPostId: string = await this.postsService.createPost(req.body)
+            const createdPost: PostsViewType | null = await this.postsQueryRep.findPostById(createdPostId, userId)
             res
                 .status(httpStatuses.CREATED_201)
-                .json(await this.postsQueryRep.findPostById(createdPostId, req.user.id))
+                .json(createdPost)
 
         } catch (e) {
 
