@@ -45,6 +45,7 @@ export class PostsController {
         } catch (e) {
 
             if (e instanceof Error) {
+                if (e.message === "Cant find needed blog") {}
                 res
                     .status(httpStatuses.BAD_REQUEST_400)
                     .json({})

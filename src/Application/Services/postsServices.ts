@@ -20,7 +20,7 @@ export class PostsService {
     async createPost (newPostData: PostsInputType): Promise<string> {
 
         const neededBlog: BlogsInstanceType | null = await this.blogsRepository.findById(newPostData.blogId)
-        if (!neededBlog) {throw new Error("Cant find neededBlog")}
+        if (!neededBlog) {throw new Error("Cant find needed blog")}
         const newPost: PostsInstanceType = neededBlog.createPostForBlog(newPostData)
         await this.postsRepository.save(newPost)
         return newPost.id
